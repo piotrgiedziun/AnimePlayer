@@ -22,13 +22,13 @@ import android.widget.TextView;
 /**
      * A dummy fragment representing a section of the app, but that simply displays dummy text.
      */
-    public class AnimeFavoritesFragment extends ListFragment {
+    public class AnimeHistoryFragment extends ListFragment {
     	Activity parent;
     	static AnimeDatabaseManager db;
     	static ListView mListView;
-    	static ArrayAdapter<Anime> mAdapter;
+    	static ArrayAdapter<History> mAdapter;
     	TextView mText; 
-    	static ArrayList<Anime> animeList = new ArrayList<Anime>();
+    	static ArrayList<History> animeList = new ArrayList<History>();
         
         @Override
         public void onAttach(Activity activity) {
@@ -44,12 +44,11 @@ import android.widget.TextView;
         
         @Override
         public void onListItemClick(ListView l, View v, int position, long id) {
-        	Log.d("JD", "onclick");
         	
-        	Anime selectedAnime=(Anime)getListView().getItemAtPosition(position);
+        	History selectedAnime=(History)getListView().getItemAtPosition(position);
         	
         	Intent intent = new Intent(parent, AnimeEpizodesActivity.class);
-        	intent.putExtra("url", selectedAnime.URL);
+        	intent.putExtra("url", selectedAnime.url);
         	intent.putExtra("name", selectedAnime.name);
         	startActivity(intent);
         	super.onListItemClick(l, v, position, id);
@@ -63,21 +62,20 @@ import android.widget.TextView;
         	
         	mText = (TextView) view.findViewById(android.R.id.empty);
         	mListView = (ListView) view.findViewById(android.R.id.list);
-            mListView.setAdapter(mAdapter = new ArrayAdapter<Anime>(c,
+            mListView.setAdapter(mAdapter = new ArrayAdapter<History>(c,
             	R.layout.listview_item,
             	animeList));
 
-           	refreshFavorites();
+            refreshHistory();
             
             return view;
         }
 
-        public static void refreshFavorites() {
+        public static void refreshHistory() {
         	animeList.clear();
-        	for(Favorites i : db.getFavorites()) {
-        		animeList.add(new Anime(i.name, i.url));
+        	for(History i : db.getHistory()) {
+        		animeList.add(i);
         	}
         	mAdapter.notifyDataSetChanged();
 		}
-
     }

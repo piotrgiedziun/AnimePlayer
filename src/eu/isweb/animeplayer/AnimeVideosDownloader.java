@@ -31,8 +31,11 @@ import android.util.Log;
 				e.printStackTrace();
 			}
         	
-        	Elements elements;
+        	Elements elements = null;
 
+        	if(doc == null)
+        		return result;
+        	
         	//vk.com
 			elements = doc.select("iframe[src^=http://vk.com/]");
 			for (Element element : elements) {
@@ -82,6 +85,16 @@ import android.util.Log;
 			    result.add(new Video( "anime-shinden.info #"+count , url, "anime-shinden.info" ));
 			}
 			
+			//myspace.com
+			elements = doc.select("embed[src^=http://mediaservices.myspace.com/]");
+			for (Element element : elements) {
+				int count = 1;
+				for(Video video : result) {
+					if(video.type.equals("myspace.com"))
+						count++;
+				}
+			    result.add(new Video( "myspace.com #"+count , element.attr("src"), "myspace.com" ));
+			}
 			return result;
         }
 		

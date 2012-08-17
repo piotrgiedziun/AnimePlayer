@@ -9,13 +9,17 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -44,11 +48,25 @@ public class AnimeEpizodesActivity extends ListActivity implements
 
 		instance = this;
 		db = ((AnimeApp) getApplication()).getDB();
+
 		mText = (TextView) findViewById(android.R.id.empty);
 		mSearch = (SearchView) findViewById(R.id.search_view);
 		mListView = (ListView) findViewById(android.R.id.list);
 		mListView.setAdapter(mAdapter = new ArrayAdapter<Epizode>(this,
-				R.layout.listview_item, epizodeList));
+				R.layout.listview_item, epizodeList){
+			@Override
+			public View getView(int position, View convertView,
+					ViewGroup parent) {
+				View v = super.getView(position, convertView, parent);
+				TextView t = (TextView) v.findViewById(android.R.id.text1);
+				if(epizodeList.get(position).isLastWatched()) {
+					t.setTextColor(Color.parseColor("#FF6C00"));
+				}else{
+					t.setTextColor(Color.BLACK);
+				}
+				return v;
+			}
+		});
 		mListView.setTextFilterEnabled(true);
 
 		if (extras != null) {
@@ -66,6 +84,7 @@ public class AnimeEpizodesActivity extends ListActivity implements
 		} else {
 			favorites.setIcon(android.R.drawable.btn_star_big_off);
 		}
+		AnimeFavoritesFragment.refreshFavorites();
 	}
 
 	public void downloadEpizodeList(String url) {
@@ -88,6 +107,7 @@ public class AnimeEpizodesActivity extends ListActivity implements
 				if (!epizodeList.isEmpty()) {
 					mSearch.setVisibility(View.VISIBLE);
 					setupSearchView();
+					goToLastWatched();
 				} else {
 					mText.setText("No results found!");
 				}
@@ -95,17 +115,42 @@ public class AnimeEpizodesActivity extends ListActivity implements
 		}.execute(url);
 	}
 
+	protected void goToLastWatched() {
+		String lastURL = db.getLastEpizodeURL(animeURL);
+		int position = 0;
+		//find lastURL in list
+		for(int i=0; i< epizodeList.size(); i++) {
+			if(epizodeList.get(i).URL.equals(lastURL)) {
+				position = i;
+				break;
+			}
+		}
+		//move listview
+		mListView.setSelection(position);
+		//unselect all
+		for(int i=0; i< epizodeList.size(); i++) {
+			epizodeList.get(i).lastWatched = false;
+		}
+		epizodeList.get(position).lastWatched = true;
+		mAdapter.notifyDataSetChanged();		
+	}
+
+	private void saveCurrentListState(String epizodeName, String URL) {
+		db.insertHistory(animeURL, animeName, epizodeName, URL);
+		AnimeHistoryFragment.refreshHistory();
+		goToLastWatched();
+	}
+	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		Log.d("JD", "onclick");
-
 		Epizode selectedEpizode = (Epizode) getListView().getItemAtPosition(
 				position);
 
+		saveCurrentListState(selectedEpizode.name, selectedEpizode.URL);
 		Intent intent = new Intent(this, AnimeVideosActivity.class);
 		intent.putExtra("url", selectedEpizode.URL);
 		intent.putExtra("name", animeName + " : " + selectedEpizode.name);
-
+		
 		startActivity(intent);
 		super.onListItemClick(l, v, position, id);
 	}
@@ -142,8 +187,12 @@ public class AnimeEpizodesActivity extends ListActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_favorites:
-			db.toogleFavorites(animeURL);
+			db.toogleFavorites(animeURL, animeName);
 			updateMenuFavorites();
+			return true;
+		case R.id.menu_goToLastWatched:
+			Log.d("JD", "gogo");
+			goToLastWatched();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

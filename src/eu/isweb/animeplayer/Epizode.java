@@ -3,6 +3,7 @@ package eu.isweb.animeplayer;
 public class Epizode {
 	public String name;
 	public String URL;
+	public boolean lastWatched = false;
 	
 	public Epizode(String n, String u) {
 		this.name = n;
@@ -12,5 +13,9 @@ public class Epizode {
 	@Override
 	public String toString() {
 		return this.name;
+	}
+
+	public boolean isLastWatched() {
+		return lastWatched;
 	}
 }

@@ -21,6 +21,7 @@ public class MainActivity extends FragmentActivity {
      * keep every loaded fragment in memory. If this becomes too memory intensive, it may be best
      * to switch to a {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
+	AnimeDatabaseManager db;
     SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
@@ -36,16 +37,15 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         
         instance = this;
-        		
+        db = ((AnimeApp) getApplication()).getDB();
+        
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-
-        // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setCurrentItem(1);
         
         new FlashPlayerManager(this).install();
-
     }
     
     @Override
@@ -70,22 +70,24 @@ public class MainActivity extends FragmentActivity {
         @Override
         public Fragment getItem(int i) {
         	switch (i) {
-        		case 0: return new AnimeListFragment();
-        		case 1: return new AnimeFavoritesFragment();
+        		case 0: return new AnimeHistoryFragment();
+        		case 1: return new AnimeListFragment();
+        		case 2: return new AnimeFavoritesFragment();
         	}
             return null;
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
-                case 0: return "ALL";
-                case 1: return "FAVORITES";
+                case 0: return "HISTORY";
+                case 1: return "ALL";
+                case 2: return "FAVORITES";
             }
             return null;
         }
@@ -103,13 +105,27 @@ public class MainActivity extends FragmentActivity {
     	       });
     	builder.create().show();
     }
+    
+    private String getFragmentTag(int pos){
+        return "android:switcher:"+R.id.pager+":"+pos;
+    }
+    
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_about:
 			about();
 			return true;
-		case R.id.menu_settings:
+		case R.id.menu_refresh:
+			AnimeFavoritesFragment.refreshFavorites();
+			AnimeHistoryFragment.refreshHistory();
+			AnimeListFragment f = (AnimeListFragment) MainActivity.this
+			        .getSupportFragmentManager().findFragmentByTag(getFragmentTag(1));
+			f.downloadAnimeList();
+			return true;
+		case R.id.menu_clearHistory:
+			db.clearHistory();
+			AnimeHistoryFragment.refreshHistory();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
