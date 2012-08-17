@@ -1,6 +1,8 @@
 package eu.isweb.animeplayer;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -8,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Window;
 
 public class MainActivity extends FragmentActivity {
@@ -34,8 +37,6 @@ public class MainActivity extends FragmentActivity {
         
         instance = this;
         		
-        // Create the adapter that will return a fragment for each of the three primary sections
-        // of the app.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
 
@@ -89,5 +90,28 @@ public class MainActivity extends FragmentActivity {
             return null;
         }
     }
-
+    
+    private void about() {
+    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    	builder.setMessage("All good stuff:\n- anime-shinden.info\n\nPizza lover:\n- JD\n\nBeta testing:\n- Madrim\n- Johniak")
+    		   .setTitle("About")
+    	       .setCancelable(false)
+    	       .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+    	           public void onClick(DialogInterface dialog, int id) {
+    	                dialog.cancel();
+    	           }
+    	       });
+    	builder.create().show();
+    }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_about:
+			about();
+			return true;
+		case R.id.menu_settings:
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 }

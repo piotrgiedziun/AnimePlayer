@@ -62,9 +62,9 @@ public class AnimeEpizodesActivity extends ListActivity implements
 	private void updateMenuFavorites() {
 		MenuItem favorites = menu.findItem(R.id.menu_favorites);
 		if (db.isFavorites(animeURL)) {
-			
+			favorites.setIcon(android.R.drawable.btn_star_big_on);
 		} else {
-			
+			favorites.setIcon(android.R.drawable.btn_star_big_off);
 		}
 	}
 
@@ -134,6 +134,18 @@ public class AnimeEpizodesActivity extends ListActivity implements
 	public boolean onCreateOptionsMenu(Menu menu) {
 		this.menu = menu;
 		getMenuInflater().inflate(R.menu.activity_epizodes, menu);
+		updateMenuFavorites();
 		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_favorites:
+			db.toogleFavorites(animeURL);
+			updateMenuFavorites();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }

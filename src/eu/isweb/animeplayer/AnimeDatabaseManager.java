@@ -24,11 +24,11 @@ public class AnimeDatabaseManager extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		createTable(historyTableName, historyColumns);
-		createTable(favoritesTableName, favoritesColumns);
+		createTable(db, historyTableName, historyColumns);
+		createTable(db, favoritesTableName, favoritesColumns);
 	}
 
-	private void createTable(String tableName, String[] tableColumns) {
+	private void createTable(SQLiteDatabase db, String tableName, String[] tableColumns) {
 		String sql = "create table " + tableName + " (" + BaseColumns._ID
 				+ " integer primary key autoincrement ";
 
@@ -38,7 +38,7 @@ public class AnimeDatabaseManager extends SQLiteOpenHelper {
 
 		sql += " ) ";
 
-		getWritableDatabase().execSQL(sql);
+		db.execSQL(sql);
 	}
 
 	public long inserHistory(String url, String name) {
@@ -65,6 +65,16 @@ public class AnimeDatabaseManager extends SQLiteOpenHelper {
 		Cursor c = getReadableDatabase().query(favoritesTableName, null, "url = \""+url+"\"",
 				null, null, null, null);
 		return c.moveToFirst();
+	}
+	
+	public void toogleFavorites(String url) {
+		if(isFavorites(url)) {
+			getWritableDatabase().delete(favoritesTableName, "url = \""+url+"\"", null);
+		}else{
+			ContentValues v = new ContentValues();
+			v.put(favoritesColumns[0], url);
+			getWritableDatabase().insert(favoritesTableName, null, v);
+		}
 	}
 
 	@Override
