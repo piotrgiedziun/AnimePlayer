@@ -14,8 +14,8 @@ public class AnimeApp extends Application {
 
 	@Override
     public void onTerminate() {
-        super.onTerminate();
         db.close();
+        super.onTerminate();
     }
 	
 	public AnimeDatabaseManager getDB() {

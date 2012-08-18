@@ -2,6 +2,10 @@ package eu.isweb.animeplayer;
 
 import java.util.ArrayList;
 
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -22,6 +26,7 @@ public class AnimeVideosActivity extends ListActivity {
 	TextView mText; 
 	SearchView mSearch;
 	ArrayList<Video> videosList = new ArrayList<Video>();
+	Epizode epizode;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,8 +45,9 @@ public class AnimeVideosActivity extends ListActivity {
         mListView.setTextFilterEnabled(true);
         
         if (extras != null) {
-        	downloadEpizodeList(extras.getString("url"));
-        	this.setTitle(extras.getString("name"));
+        	epizode = (Epizode) extras.getSerializable("epizode");
+        	downloadEpizodeList(epizode.URL);
+        	this.setTitle(epizode.name);
         }
     }
     
@@ -49,15 +55,83 @@ public class AnimeVideosActivity extends ListActivity {
     	mText.setText("Retrieving data...");
 
     	this.setProgressBarIndeterminateVisibility(true);
-    	new AnimeVideosDownloader(){
-    		protected void onPostExecute(ArrayList<Video> results) {
-    			cm.remove(this.hashCode());
+    	new AnimeDownloader<Video>(){
 
-    			videosList.clear();
-    			for(Video result : results) {
-    				videosList.add(result);
-    			}
-    			
+			@Override
+			protected ArrayList<Video> doInBackgroundAction(Document doc) {
+				ArrayList<Video> result = new ArrayList<Video>();
+				
+				Elements elements = null;
+	        	
+	        	//vk.com
+				elements = doc.select("iframe[src^=http://vk.com/]");
+				for (Element element : elements) {
+					int count = 1;
+					for(Video video : result) {
+						if(video.type.equals("vk.com"))
+							count++;
+					}
+				    result.add(new Video( "vk.com #"+count , element.attr("src"), "vk.com" ));
+				}
+				
+				//sibnet.ru
+				elements = doc.select("embed[src^=http://video.sibnet.ru/]");
+				for (Element element : elements) {
+					int count = 1;
+					for(Video video : result) {
+						if(video.type.equals("sibnet.ru"))
+							count++;
+					}
+				    result.add(new Video( "sibnet.ru #"+count , element.attr("src"), "sibnet.ru" ));
+				}
+				
+	        	//dailymotion.com
+				elements = doc.select("iframe[src^=http://www.dailymotion.com/]");
+				for (Element element : elements) {
+					int count = 1;
+					for(Video video : result) {
+						if(video.type.equals("dailymotion.com"))
+							count++;
+					}
+				    result.add(new Video( "dailymotion.com #"+count , element.attr("src"), "dailymotion.com" ));
+				}
+				
+				//anime-shinden.info
+				elements = doc.select("embed[src^=http://anime-shinden.info/]");
+				for (Element element : elements) {
+					int count = 1;
+					for(Video video : result) {
+						if(video.type.equals("anime-shinden.info"))
+							count++;
+					}
+					String url = element.attr("flashvars");
+					int start = url.indexOf("http://anime-shinden.info/player/hd.php?link=");
+					int end = (url.substring(start, url.length()-1-start)).indexOf("mp4");
+					url = url.substring(start, end+start) + "mp4";
+					url = "<html><body  style=\"padding:0px; margin:0px\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <video width=\"100%\" height=\"100%\" controls=\"controls\"><source src=\""+url+"\" type=\"video/mp4\" autoplay=\"autoplay\"/></video></body></html>";
+				    result.add(new Video( "anime-shinden.info #"+count , url, "anime-shinden.info" ));
+				}
+				
+				//myspace.com
+				elements = doc.select("embed[src^=http://mediaservices.myspace.com/]");
+				for (Element element : elements) {
+					int count = 1;
+					for(Video video : result) {
+						if(video.type.equals("myspace.com"))
+							count++;
+					}
+				    result.add(new Video( "myspace.com #"+count , element.attr("src"), "myspace.com" ));
+				}
+
+				
+				return result;
+			}
+
+			@Override
+			protected void onPostExecuteAction(ArrayList<Video> result) {
+				videosList.clear();
+				videosList.addAll(result);
+				
     			mAdapter.notifyDataSetChanged();
     			if(cm.count() == 0)
     				instance.setProgressBarIndeterminateVisibility(false);
@@ -65,7 +139,7 @@ public class AnimeVideosActivity extends ListActivity {
     			if(videosList.isEmpty()) {
     				mText.setText("No results found!");
     			}
-    		};
+			};
     	}.execute(url);
     }
     

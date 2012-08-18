@@ -15,18 +15,8 @@ import android.view.Window;
 
 public class MainActivity extends FragmentActivity {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
-     * sections. We use a {@link android.support.v4.app.FragmentPagerAdapter} derivative, which will
-     * keep every loaded fragment in memory. If this becomes too memory intensive, it may be best
-     * to switch to a {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
 	AnimeDatabaseManager db;
     SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     ViewPager mViewPager;
     Context instance;
 
@@ -54,13 +44,6 @@ public class MainActivity extends FragmentActivity {
         return true;
     }
 
-    
-
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
-     * sections of the app.
-     */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -98,7 +81,7 @@ public class MainActivity extends FragmentActivity {
     	builder.setMessage("All good stuff:\n- anime-shinden.info\n\nPizza lover:\n- JD\n\nBeta testing:\n- Madrim\n- Johniak")
     		   .setTitle("About")
     	       .setCancelable(false)
-    	       .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+    	       .setNeutralButton("Ok, let me watch now", new DialogInterface.OnClickListener() {
     	           public void onClick(DialogInterface dialog, int id) {
     	                dialog.cancel();
     	           }
@@ -116,13 +99,14 @@ public class MainActivity extends FragmentActivity {
 		case R.id.menu_about:
 			about();
 			return true;
+			
 		case R.id.menu_refresh:
 			AnimeFavoritesFragment.refreshFavorites();
 			AnimeHistoryFragment.refreshHistory();
-			AnimeListFragment f = (AnimeListFragment) MainActivity.this
-			        .getSupportFragmentManager().findFragmentByTag(getFragmentTag(1));
-			f.downloadAnimeList();
+			AnimeListFragment f = (AnimeListFragment) MainActivity.this.getSupportFragmentManager().findFragmentByTag(getFragmentTag(1));
+			f.refresh();
 			return true;
+			
 		case R.id.menu_clearHistory:
 			db.clearHistory();
 			AnimeHistoryFragment.refreshHistory();

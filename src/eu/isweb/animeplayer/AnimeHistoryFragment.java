@@ -6,22 +6,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-/**
-     * A dummy fragment representing a section of the app, but that simply displays dummy text.
-     */
-    public class AnimeHistoryFragment extends ListFragment {
+    public class AnimeHistoryFragment extends ListFragment
+    	implements Refreshable {
     	Activity parent;
+    	TextView mText; 
     	static AnimeDatabaseManager db;
     	static ListView mListView;
     	static ArrayAdapter<History> mAdapter;
-    	TextView mText; 
     	static ArrayList<History> animeList = new ArrayList<History>();
         
         @Override
@@ -42,8 +45,7 @@ import android.widget.TextView;
         	History selectedAnime=(History)getListView().getItemAtPosition(position);
         	
         	Intent intent = new Intent(parent, AnimeEpizodesActivity.class);
-        	intent.putExtra("url", selectedAnime.url);
-        	intent.putExtra("name", selectedAnime.name);
+        	intent.putExtra("anime", new Anime(selectedAnime.name, selectedAnime.url));
         	startActivity(intent);
         	super.onListItemClick(l, v, position, id);
         }
@@ -56,10 +58,11 @@ import android.widget.TextView;
         	
         	mText = (TextView) view.findViewById(android.R.id.empty);
         	mListView = (ListView) view.findViewById(android.R.id.list);
+        	mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        	mListView.setMultiChoiceModeListener(new AnimeHistoryDeleteCallback());
             mListView.setAdapter(mAdapter = new ArrayAdapter<History>(c,
-            	R.layout.listview_item,
-            	animeList));
-
+            		R.layout.listview_item_selectable, animeList));
+            
             refreshHistory();
             
             return view;
@@ -72,4 +75,53 @@ import android.widget.TextView;
         	}
         	mAdapter.notifyDataSetChanged();
 		}
+        
+		@Override
+		public void refresh() {
+			refreshHistory();			
+		}
+        
+        private class AnimeHistoryDeleteCallback  implements ListView.MultiChoiceModeListener {
+
+        	
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                getActivity().getMenuInflater().inflate(R.menu.history_delete, menu);
+                mode.setTitle("Select items");
+                mode.setSubtitle("Use right buttons to perform action.");
+                return true;
+            }
+
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return true;
+            }
+
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                case R.id.menu_delete:
+                	SparseBooleanArray list = getListView().getCheckedItemPositions();
+         			for(int i = 0; i < list.size(); i++) {
+         				int lPos = list.keyAt(i);
+         				if(list.get(lPos)) {
+         					History selectedAnime=(History)getListView().getItemAtPosition(lPos);
+         					db.removeHistory(selectedAnime.url);
+         				}
+         			}
+         			refreshHistory();
+                    Toast.makeText(getActivity(), "Action performed!", Toast.LENGTH_SHORT).show();
+                    mode.finish();
+                    break;
+                }
+                return true;
+            }
+
+            public void onItemCheckedStateChanged(ActionMode mode,
+                    int position, long id, boolean checked) {
+            }
+            
+        	@Override
+        	public void onDestroyActionMode(ActionMode arg0) {
+        		
+        	}
+            
+        }
     }

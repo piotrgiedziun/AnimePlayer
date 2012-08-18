@@ -1,6 +1,10 @@
 package eu.isweb.animeplayer;
 
-public class Epizode {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Epizode 
+	implements Serializable {
 	public String name;
 	public String URL;
 	public boolean lastWatched = false;

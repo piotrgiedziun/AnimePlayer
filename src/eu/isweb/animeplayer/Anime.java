@@ -1,6 +1,10 @@
 package eu.isweb.animeplayer;
 
-public class Anime {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Anime
+	implements Serializable {
 	public String name;
 	public String URL;
 	

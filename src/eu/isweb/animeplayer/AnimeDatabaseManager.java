@@ -45,15 +45,15 @@ public class AnimeDatabaseManager extends SQLiteOpenHelper {
 		return c.moveToFirst();
 	}
 	
-	public long insertHistory(String url, String name, String epizode, String lastURL) {
-		if(isInHistory(url)) {
-			getWritableDatabase().delete(historyTableName, "url = \""+url+"\"", null);
+	public long insertHistory(History h) {
+		if(isInHistory(h.url)) {
+			getWritableDatabase().delete(historyTableName, "url = \""+h.url+"\"", null);
 		}
 		ContentValues v = new ContentValues();
-		v.put(historyColumns[0], url);
-		v.put(historyColumns[1], name);
-		v.put(historyColumns[2], epizode);
-		v.put(historyColumns[3], lastURL);
+		v.put(historyColumns[0], h.url);
+		v.put(historyColumns[1], h.name);
+		v.put(historyColumns[2], h.epizode);
+		v.put(historyColumns[3], h.lastURL);
 		return getWritableDatabase().insert(historyTableName, null, v);
 	}
 	
@@ -85,13 +85,13 @@ public class AnimeDatabaseManager extends SQLiteOpenHelper {
 		return c.moveToFirst();
 	}
 	
-	public void toogleFavorites(String url, String name) {
-		if(isFavorites(url)) {
-			getWritableDatabase().delete(favoritesTableName, "url = \""+url+"\"", null);
+	public void toogleFavorites(Anime a) {
+		if(isFavorites(a.URL)) {
+			getWritableDatabase().delete(favoritesTableName, "url = \""+a.URL+"\"", null);
 		}else{
 			ContentValues v = new ContentValues();
-			v.put(favoritesColumns[0], url);
-			v.put(favoritesColumns[1], name);
+			v.put(favoritesColumns[0], a.URL);
+			v.put(favoritesColumns[1], a.name);
 			getWritableDatabase().insert(favoritesTableName, null, v);
 		}
 	}
@@ -123,6 +123,10 @@ public class AnimeDatabaseManager extends SQLiteOpenHelper {
 	private void createTables(SQLiteDatabase db) {
 		createTable(db, historyTableName, historyColumns);
 		createTable(db, favoritesTableName, favoritesColumns);
+	}
+
+	public void removeHistory(String url) {
+		getWritableDatabase().delete(historyTableName, "url = \""+url+"\"", null);
 	}
 
 }

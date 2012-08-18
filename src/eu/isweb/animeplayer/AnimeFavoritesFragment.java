@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +13,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-/**
-     * A dummy fragment representing a section of the app, but that simply displays dummy text.
-     */
-    public class AnimeFavoritesFragment extends ListFragment {
+    public class AnimeFavoritesFragment extends ListFragment
+		implements Refreshable {
     	Activity parent;
+    	TextView mText;
     	static AnimeDatabaseManager db;
     	static ListView mListView;
-    	static ArrayAdapter<Anime> mAdapter;
-    	TextView mText; 
+    	static ArrayAdapter<Anime> mAdapter; 
     	static ArrayList<Anime> animeList = new ArrayList<Anime>();
         
         @Override
@@ -39,13 +36,10 @@ import android.widget.TextView;
         
         @Override
         public void onListItemClick(ListView l, View v, int position, long id) {
-        	Log.d("JD", "onclick");
-        	
         	Anime selectedAnime=(Anime)getListView().getItemAtPosition(position);
         	
         	Intent intent = new Intent(parent, AnimeEpizodesActivity.class);
-        	intent.putExtra("url", selectedAnime.URL);
-        	intent.putExtra("name", selectedAnime.name);
+        	intent.putExtra("anime", selectedAnime);
         	startActivity(intent);
         	super.onListItemClick(l, v, position, id);
         }
@@ -59,8 +53,7 @@ import android.widget.TextView;
         	mText = (TextView) view.findViewById(android.R.id.empty);
         	mListView = (ListView) view.findViewById(android.R.id.list);
             mListView.setAdapter(mAdapter = new ArrayAdapter<Anime>(c,
-            	R.layout.listview_item,
-            	animeList));
+            	R.layout.listview_item, animeList));
 
            	refreshFavorites();
             
@@ -73,6 +66,11 @@ import android.widget.TextView;
         		animeList.add(new Anime(i.name, i.url));
         	}
         	mAdapter.notifyDataSetChanged();
+		}
+
+		@Override
+		public void refresh() {
+			refreshFavorites();
 		}
 
     }

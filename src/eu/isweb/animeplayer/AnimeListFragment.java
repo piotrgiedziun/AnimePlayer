@@ -1,26 +1,27 @@
 package eu.isweb.animeplayer;
 import java.util.ArrayList;
 
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-/**
-     * A dummy fragment representing a section of the app, but that simply displays dummy text.
-     */
     public class AnimeListFragment extends ListFragment
-    	implements SearchView.OnQueryTextListener {
+    	implements Refreshable, SearchView.OnQueryTextListener {
     	Activity parent;
     	ListView mListView;
     	ArrayAdapter<Anime> mAdapter;
@@ -36,16 +37,13 @@ import android.widget.TextView;
         
         public void downloadAnimeList() {
         	mText.setText("Retrieving data...");
-        	mSearch.setVisibility(View.GONE);
         	parent.setProgressBarIndeterminateVisibility(true);
-        	new AnimeListDownloader(){
-        		protected void onPostExecute(ArrayList<Anime> results) {
-        			cm.remove(this.hashCode());
-
+        	
+        	new AnimeDownloader<Anime>(){
+        		@Override
+        		protected void onPostExecuteAction(ArrayList<Anime> result) {
         			animeList.clear();
-        			for(Anime result : results) {
-        				animeList.add(result);
-        			}
+        			animeList.addAll(result);
         			
         			mAdapter.notifyDataSetChanged();
         			if(cm.count() == 0)
@@ -55,10 +53,36 @@ import android.widget.TextView;
         				mSearch.setVisibility(View.VISIBLE);
         				setupSearchView();
         			}else{
+        				mSearch.setVisibility(View.GONE);
         				mText.setText("No results found!");
         			}
-        		};
-        	}.execute();
+        		}
+
+				@Override
+				protected ArrayList<Anime> doInBackgroundAction(Document doc) {
+					ArrayList<Anime> result = new ArrayList<Anime>();
+					
+					Elements elements = doc.select("a");
+					boolean dump = false;
+					for (Element element : elements) {
+						if(element.text().equals(".hack//Roots"))
+							dump = true;
+						if(dump) {
+							result.add(new Anime(element.text(), element.attr("href")));
+		    			if(element.text().equals("Zombie Loan"))
+		    				break;
+						}
+					}
+					
+					return result;
+				};
+        	}.execute("http://www.anime-shinden.info/index.php?do=cat&category=online-glowna");
+        }
+        
+        @Override
+        public void onResume() {
+        	getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        	super.onResume();
         }
         
         @Override
@@ -69,13 +93,10 @@ import android.widget.TextView;
         
         @Override
         public void onListItemClick(ListView l, View v, int position, long id) {
-        	Log.d("JD", "onclick");
-        	
         	Anime selectedAnime=(Anime)getListView().getItemAtPosition(position);
         	
         	Intent intent = new Intent(parent, AnimeEpizodesActivity.class);
-        	intent.putExtra("url", selectedAnime.URL);
-        	intent.putExtra("name", selectedAnime.name);
+        	intent.putExtra("anime", selectedAnime);
         	startActivity(intent);
         	super.onListItemClick(l, v, position, id);
         }
@@ -90,8 +111,7 @@ import android.widget.TextView;
         	mSearch = (SearchView) view.findViewById(R.id.search_view);
         	mListView = (ListView) view.findViewById(android.R.id.list);
             mListView.setAdapter(mAdapter = new ArrayAdapter<Anime>(c,
-            	R.layout.listview_item,
-            	animeList));
+            	R.layout.listview_item, animeList));
             mListView.setTextFilterEnabled(true);
 
             return view;
@@ -116,4 +136,9 @@ import android.widget.TextView;
         public boolean onQueryTextSubmit(String query) {
             return false;
         }
+
+		@Override
+		public void refresh() {
+			downloadAnimeList();
+		}
     }
