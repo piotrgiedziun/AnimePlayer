@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Anime Player</string>
+    <string name="menu_clearHistory">Wyszyść historię</string>
+    <string name="title_activity_main">Anime Player v1.1</string>
+    <string name="title_activity_anime">AnimeActivity</string>
+    <string name="menu_favorites">Ulubione</string>
+	<string name="menu_about">Informacje</string>
+	<string name="menu_refresh">Odśwież</string>
+	<string name="menu_goToLastWatched">Przejdź do ostatniego</string>
+	<string name="downloading_data">Pobieranie... Proszę czekać</string>
+	<string name="no_results_found">Nic nie znaleziono</string>
+	<string name="enter_epizode_name">Wpisz nazwę epizodu</string>
+	<string name="enter_anime_name">Wpisz nazwę anime</string>
+	<string name="about">Informacje</string>
+	<string name="about_back">OK</string>
+	<string name="history">HISTORIA</string>
+	<string name="all">WSZYSTKIE</string>
+	<string name="favorites">ULUBIONE</string>
+	<string name="done">Wykonano!</string>
+	<string name="select_items">Zaznacz elementy</string>
+	<string name="history_subtitile">W celu wykonania akcji wybierz przycisk z prawej strony.</string>
+</resources>

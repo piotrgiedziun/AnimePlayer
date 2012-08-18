@@ -41,7 +41,6 @@ import android.widget.Toast;
         
         @Override
         public void onListItemClick(ListView l, View v, int position, long id) {
-        	
         	History selectedAnime=(History)getListView().getItemAtPosition(position);
         	
         	Intent intent = new Intent(parent, AnimeEpizodesActivity.class);
@@ -86,8 +85,8 @@ import android.widget.Toast;
         	
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 getActivity().getMenuInflater().inflate(R.menu.history_delete, menu);
-                mode.setTitle("Select items");
-                mode.setSubtitle("Use right buttons to perform action.");
+                mode.setTitle(getString(R.string.select_items));
+                mode.setSubtitle(getString(R.string.history_subtitile));
                 return true;
             }
 
@@ -107,7 +106,7 @@ import android.widget.Toast;
          				}
          			}
          			refreshHistory();
-                    Toast.makeText(getActivity(), "Action performed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.done), Toast.LENGTH_SHORT).show();
                     mode.finish();
                     break;
                 }

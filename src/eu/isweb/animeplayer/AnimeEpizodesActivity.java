@@ -82,7 +82,7 @@ public class AnimeEpizodesActivity extends ListActivity implements
 	}
 
 	public void downloadEpizodeList(String url) {
-		mText.setText("Retrieving data...");
+		mText.setText(getString(R.string.downloading_data));
 		this.setProgressBarIndeterminateVisibility(true);
 		new AnimeDownloader<Epizode>() {
 			@Override
@@ -101,7 +101,7 @@ public class AnimeEpizodesActivity extends ListActivity implements
 					goToLastWatched();
 				} else {
 					mSearch.setVisibility(View.GONE);
-					mText.setText("No results found!");
+					mText.setText(getString(R.string.no_results_found));
 				}
 			};
 
@@ -163,7 +163,7 @@ public class AnimeEpizodesActivity extends ListActivity implements
 		mSearch.setIconifiedByDefault(false);
 		mSearch.setOnQueryTextListener(this);
 		mSearch.setSubmitButtonEnabled(false);
-		mSearch.setQueryHint("Enter epizode name");
+		mSearch.setQueryHint(getString(R.string.enter_epizode_name));
 	}
 
 	public boolean onQueryTextChange(String newText) {

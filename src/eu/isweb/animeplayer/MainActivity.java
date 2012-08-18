@@ -68,9 +68,9 @@ public class MainActivity extends FragmentActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
-                case 0: return "HISTORY";
-                case 1: return "ALL";
-                case 2: return "FAVORITES";
+                case 0: return getString(R.string.history);
+                case 1: return getString(R.string.all);
+                case 2: return getString(R.string.favorites);
             }
             return null;
         }
@@ -79,9 +79,9 @@ public class MainActivity extends FragmentActivity {
     private void about() {
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
     	builder.setMessage("All good stuff:\n- anime-shinden.info\n\nPizza lover:\n- JD\n\nBeta testing:\n- Madrim\n- Johniak")
-    		   .setTitle("About")
+    		   .setTitle(getString(R.string.about))
     	       .setCancelable(false)
-    	       .setNeutralButton("Ok, let me watch now", new DialogInterface.OnClickListener() {
+    	       .setNeutralButton(getString(R.string.about_back), new DialogInterface.OnClickListener() {
     	           public void onClick(DialogInterface dialog, int id) {
     	                dialog.cancel();
     	           }

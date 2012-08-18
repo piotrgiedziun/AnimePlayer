@@ -52,7 +52,7 @@ public class AnimeVideosActivity extends ListActivity {
     }
     
     public void downloadEpizodeList(String url) {
-    	mText.setText("Retrieving data...");
+    	mText.setText(getString(R.string.downloading_data));
 
     	this.setProgressBarIndeterminateVisibility(true);
     	new AnimeDownloader<Video>(){
@@ -137,7 +137,7 @@ public class AnimeVideosActivity extends ListActivity {
     				instance.setProgressBarIndeterminateVisibility(false);
     			
     			if(videosList.isEmpty()) {
-    				mText.setText("No results found!");
+    				mText.setText(getString(R.string.no_results_found));
     			}
 			};
     	}.execute(url);

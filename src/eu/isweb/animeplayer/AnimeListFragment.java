@@ -36,7 +36,7 @@ import android.widget.TextView;
         }
         
         public void downloadAnimeList() {
-        	mText.setText("Retrieving data...");
+        	mText.setText(getString(R.string.downloading_data));
         	parent.setProgressBarIndeterminateVisibility(true);
         	
         	new AnimeDownloader<Anime>(){
@@ -54,7 +54,7 @@ import android.widget.TextView;
         				setupSearchView();
         			}else{
         				mSearch.setVisibility(View.GONE);
-        				mText.setText("No results found!");
+        				mText.setText(getString(R.string.no_results_found));
         			}
         		}
 
@@ -121,7 +121,7 @@ import android.widget.TextView;
         	mSearch.setIconifiedByDefault(false);
         	mSearch.setOnQueryTextListener(this);
             mSearch.setSubmitButtonEnabled(false);
-            mSearch.setQueryHint("Enter anime title");
+            mSearch.setQueryHint(getString(R.string.enter_anime_name));
         }
 
         public boolean onQueryTextChange(String newText) {
