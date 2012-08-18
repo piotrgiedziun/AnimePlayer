@@ -2,8 +2,6 @@ package eu.isweb.animeplayer;
 
 import java.util.ArrayList;
 
-import android.content.Context;
-
 public class ConnectionManager {
 	private static ConnectionManager instance = null;
 	private ArrayList<Integer> connections = new ArrayList<Integer>();

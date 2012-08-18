@@ -1,9 +1,4 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu_goToLastWatched"
-        android:title="@string/menu_goToLastWatched"
-        android:icon="@android:drawable/btn_dialog"
-        android:orderInCategory="100"
-        android:showAsAction="always" />
     <item android:id="@+id/menu_favorites"
         android:title="@string/menu_favorites"
         android:icon="@android:drawable/btn_star"

@@ -1,1 +1,6 @@
 bin/
+*.dex
+
+*.dex
+
+*.class

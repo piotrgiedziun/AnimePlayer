@@ -3,17 +3,12 @@ package eu.isweb.animeplayer;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 	
 	class AnimeListDownloader extends AsyncTask<String, Void, ArrayList<Anime>> {
 	

@@ -1,8 +1,6 @@
 package eu.isweb.animeplayer;
 import java.util.ArrayList;
 
-import org.jsoup.nodes.Element;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -37,7 +35,7 @@ import android.widget.TextView;
         }
         
         public void downloadAnimeList() {
-        	mText.setText("Feething data...");
+        	mText.setText("Retrieving data...");
         	mSearch.setVisibility(View.GONE);
         	parent.setProgressBarIndeterminateVisibility(true);
         	new AnimeListDownloader(){

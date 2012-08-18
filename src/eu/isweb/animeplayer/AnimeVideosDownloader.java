@@ -9,7 +9,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import android.os.AsyncTask;
-import android.util.Log;
 	
 	class AnimeVideosDownloader extends AsyncTask<String, Void, ArrayList<Video>> {
 	

@@ -16,11 +16,10 @@ public final class R {
         public static final int refresh=0x7f020002;
     }
     public static final class id {
-        public static final int menu_about=0x7f070008;
-        public static final int menu_clearHistory=0x7f070007;
-        public static final int menu_favorites=0x7f070005;
-        public static final int menu_goToLastWatched=0x7f070004;
-        public static final int menu_refresh=0x7f070006;
+        public static final int menu_about=0x7f070007;
+        public static final int menu_clearHistory=0x7f070006;
+        public static final int menu_favorites=0x7f070004;
+        public static final int menu_refresh=0x7f070005;
         public static final int pager=0x7f070001;
         public static final int pager_title_strip=0x7f070002;
         public static final int search_view=0x7f070000;

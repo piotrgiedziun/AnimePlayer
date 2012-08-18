@@ -2,24 +2,18 @@ package eu.isweb.animeplayer;
 
 import java.util.ArrayList;
 
-import org.jsoup.nodes.Element;
-
-import android.os.Bundle;
 import android.app.Activity;
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -88,7 +82,7 @@ public class AnimeEpizodesActivity extends ListActivity implements
 	}
 
 	public void downloadEpizodeList(String url) {
-		mText.setText("Feething data...");
+		mText.setText("Retrieving data...");
 		mSearch.setVisibility(View.GONE);
 		this.setProgressBarIndeterminateVisibility(true);
 		new AnimeEpizodesDownloader() {
@@ -189,10 +183,6 @@ public class AnimeEpizodesActivity extends ListActivity implements
 		case R.id.menu_favorites:
 			db.toogleFavorites(animeURL, animeName);
 			updateMenuFavorites();
-			return true;
-		case R.id.menu_goToLastWatched:
-			Log.d("JD", "gogo");
-			goToLastWatched();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

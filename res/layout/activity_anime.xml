@@ -18,7 +18,8 @@
                android:drawSelectorOnTop="false"/>
 
      <TextView android:id="@id/android:empty"
+     			android:textSize = "20sp" 
                android:layout_width="match_parent"
                android:layout_height="match_parent"
-               android:text="No data"/>
+               android:text="Waiting for action to be performed"/>
  </LinearLayout>

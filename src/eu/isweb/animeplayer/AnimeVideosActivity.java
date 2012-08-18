@@ -2,16 +2,11 @@ package eu.isweb.animeplayer;
 
 import java.util.ArrayList;
 
-import org.jsoup.nodes.Element;
-
-import android.os.Bundle;
 import android.app.Activity;
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
@@ -51,7 +46,7 @@ public class AnimeVideosActivity extends ListActivity {
     }
     
     public void downloadEpizodeList(String url) {
-    	mText.setText("Feething data...");
+    	mText.setText("Retrieving data...");
 
     	this.setProgressBarIndeterminateVisibility(true);
     	new AnimeVideosDownloader(){
