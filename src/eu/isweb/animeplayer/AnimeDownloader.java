@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 public abstract class AnimeDownloader<T>
 	extends AsyncTask<String, Void, ArrayList<T>>	{
 	protected ConnectionManager cm;
+	protected static String USER_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2; en-gb; GT-P1000 Build/FROYO) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
 	
 	@Override
 	protected void onPreExecute() {
@@ -27,7 +28,8 @@ public abstract class AnimeDownloader<T>
     	Document doc = null;
     	ArrayList<T> result = new ArrayList<T>();
     	try {
-			doc = Jsoup.connect(attributes[0]).get();
+			doc = Jsoup.connect(attributes[0])
+					.userAgent(USER_AGENT).get();
 
         	if(doc == null)
         		return result;

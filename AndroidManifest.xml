@@ -58,6 +58,14 @@
                           <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".VideoActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_anime" >
+            <intent-filter>
+                          <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

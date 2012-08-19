@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Anime Player</string>
     <string name="menu_clearHistory">Clear history</string>
-    <string name="title_activity_main">Anime Player v1.1</string>
+    <string name="title_activity_main">Anime Player v1.2</string>
     <string name="title_activity_anime">AnimeActivity</string>
     <string name="menu_favorites">Favorites</string>
 	<string name="menu_about">About</string>

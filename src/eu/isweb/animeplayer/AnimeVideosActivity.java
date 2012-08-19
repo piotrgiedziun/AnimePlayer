@@ -65,26 +65,31 @@ public class AnimeVideosActivity extends ListActivity {
 				
 				Elements elements = null;
 	        	
+				//anime-shinden.info
+				elements = doc.select("embed[src^=http://anime-shinden.info/]");
+				for (Element element : elements) {
+					int count = 1;
+					for(Video video : result) {
+						if(video.type.equals(Video.TYPE_ANIME_SHIDEN))
+							count++;
+					}
+					String url = element.attr("flashvars");
+					int start = url.indexOf("http://anime-shinden.info/player/hd.php?link=");
+					int end = (url.substring(start, url.length()-1-start)).indexOf("mp4");
+					url = url.substring(start, end+start) + "mp4";
+					//url = "<html><body  style=\"padding:0px; margin:0px;background-color:black;\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <video id=\"video\" width=\"100%\" height=\"100%\" controls autoplay><source src=\""+url+"\" type=\"video/mp4\"/></video></body></html>";
+				    result.add(new Video( "anime-shinden.info #"+count , url, Video.TYPE_ANIME_SHIDEN ));
+				}
+				
 	        	//vk.com
 				elements = doc.select("iframe[src^=http://vk.com/]");
 				for (Element element : elements) {
 					int count = 1;
 					for(Video video : result) {
-						if(video.type.equals("vk.com"))
+						if(video.type.equals(Video.TYPE_VK))
 							count++;
 					}
-				    result.add(new Video( "vk.com #"+count , element.attr("src"), "vk.com" ));
-				}
-				
-				//sibnet.ru
-				elements = doc.select("embed[src^=http://video.sibnet.ru/]");
-				for (Element element : elements) {
-					int count = 1;
-					for(Video video : result) {
-						if(video.type.equals("sibnet.ru"))
-							count++;
-					}
-				    result.add(new Video( "sibnet.ru #"+count , element.attr("src"), "sibnet.ru" ));
+				    result.add(new Video( "vk.com #"+count , element.attr("src"), Video.TYPE_VK ));
 				}
 				
 	        	//dailymotion.com
@@ -92,26 +97,21 @@ public class AnimeVideosActivity extends ListActivity {
 				for (Element element : elements) {
 					int count = 1;
 					for(Video video : result) {
-						if(video.type.equals("dailymotion.com"))
+						if(video.type.equals(Video.TYPE_DAILYMOTION))
 							count++;
 					}
-				    result.add(new Video( "dailymotion.com #"+count , element.attr("src"), "dailymotion.com" ));
+				    result.add(new Video( "dailymotion.com #"+count , element.attr("src"), Video.TYPE_DAILYMOTION ));
 				}
 				
-				//anime-shinden.info
-				elements = doc.select("embed[src^=http://anime-shinden.info/]");
+				//sibnet.ru
+				elements = doc.select("embed[src^=http://video.sibnet.ru/]");
 				for (Element element : elements) {
 					int count = 1;
 					for(Video video : result) {
-						if(video.type.equals("anime-shinden.info"))
+						if(video.type.equals(Video.TYPE_SIBNET))
 							count++;
 					}
-					String url = element.attr("flashvars");
-					int start = url.indexOf("http://anime-shinden.info/player/hd.php?link=");
-					int end = (url.substring(start, url.length()-1-start)).indexOf("mp4");
-					url = url.substring(start, end+start) + "mp4";
-					url = "<html><body  style=\"padding:0px; margin:0px;background-color:black;\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <video id=\"video\" width=\"100%\" height=\"100%\" controls autoplay><source src=\""+url+"\" type=\"video/mp4\"/></video></body></html>";
-				    result.add(new Video( "anime-shinden.info #"+count , url, "anime-shinden.info" ));
+				    result.add(new Video( "sibnet.ru #"+count , element.attr("src"), Video.TYPE_SIBNET ));
 				}
 				
 				//myspace.com
@@ -119,10 +119,10 @@ public class AnimeVideosActivity extends ListActivity {
 				for (Element element : elements) {
 					int count = 1;
 					for(Video video : result) {
-						if(video.type.equals("myspace.com"))
+						if(video.type.equals(Video.TYPE_MYSPACE))
 							count++;
 					}
-				    result.add(new Video( "myspace.com #"+count , element.attr("src"), "myspace.com" ));
+				    result.add(new Video( "myspace.com #"+count , element.attr("src"), Video.TYPE_MYSPACE ));
 				}
 
 				
@@ -148,8 +148,14 @@ public class AnimeVideosActivity extends ListActivity {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
     	Video selectedVideo = (Video)getListView().getItemAtPosition(position);
+    	Intent intent = null;
     	
-    	Intent intent = new Intent(this, WebVideoActivity.class);
+    	if(selectedVideo.type.equals(Video.TYPE_ANIME_SHIDEN) 
+    			|| selectedVideo.type.equals(Video.TYPE_VK) ) {
+        	intent = new Intent(this, VideoActivity.class);
+    	}else{
+        	intent = new Intent(this, WebVideoActivity.class);
+    	}
     	intent.putExtra("video", selectedVideo);
     	intent.putExtra("anime", anime);
     	intent.putExtra("epizode", epizode);

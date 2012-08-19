@@ -80,7 +80,6 @@ public class MainActivity extends FragmentActivity {
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
     	builder.setMessage("All good stuff:\n- anime-shinden.info\n\nPizza lover:\n- JD\n\nBeta testing:\n- Madrim\n- Johniak")
     		   .setTitle(getString(R.string.about))
-    	       .setCancelable(false)
     	       .setNeutralButton(getString(R.string.about_back), new DialogInterface.OnClickListener() {
     	           public void onClick(DialogInterface dialog, int id) {
     	                dialog.cancel();
@@ -111,7 +110,6 @@ public class MainActivity extends FragmentActivity {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(getString(R.string.clear_history))
 					.setTitle(getString(R.string.menu_clearHistory))
-			       .setCancelable(false)
 			       .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface dialog, int id) {
 			        	   db.clearHistory();

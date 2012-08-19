@@ -32,7 +32,6 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 public class WebVideoActivity extends Activity {
-	protected static AlertDialog alertDialog;
 	WebView webView = null;
 	Video video;
 	Anime anime;
@@ -57,7 +56,7 @@ public class WebVideoActivity extends Activity {
 			Handler h = getWindow().getDecorView().getHandler();
 			if (h != null) {
 				h.removeCallbacks(mNavHider);
-				h.postDelayed(mNavHider, 1500);
+				h.postDelayed(mNavHider, 3000);
 			}
 		}
 
@@ -80,8 +79,7 @@ public class WebVideoActivity extends Activity {
 
 		db = ((AnimeApp) getApplication()).getDB();
 		
-		View view;
-		view = findViewById(R.id.video_player_layout);
+		View view = findViewById(R.id.video_player_layout);
 		view.setOnSystemUiVisibilityChangeListener(new OnSystemUiVisibilityChangeListener() {
 			@Override
 			public void onSystemUiVisibilityChange(int visibility) {
@@ -130,12 +128,7 @@ public class WebVideoActivity extends Activity {
 			setTitle(anime.name + " : " + e.name);
 			
 			webView.stopLoading();
-			if (video.type.equals("anime-shinden.info")) {
-				webView.loadDataWithBaseURL("animeplayer://animename",
-						video.URL, "text/html", "UTF-8", null);
-			} else {
-				webView.loadUrl(video.URL);
-			}
+			webView.loadUrl(video.URL);
 		}
 	}
 
@@ -173,73 +166,6 @@ public class WebVideoActivity extends Activity {
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		if(video.type.equals("anime-shinden.info") || video.type.equals("vk.com")) {
-			getMenuInflater().inflate(R.menu.video, menu);
-		}
-		return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-
-		switch (item.getItemId()) {
-		case R.id.video_play:
-			webView.loadUrl("javascript:document.getElementById('video').play();");
-			return true;
-		case R.id.video_pause:
-			webView.loadUrl("javascript:document.getElementById('video').pause();");
-			return true;
-		case R.id.video_jump:
-			AlertDialog.Builder builder;
-
-			Context mContext = getApplicationContext();
-			LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
-			View layout = inflater.inflate(R.layout.video_jump, (ViewGroup) findViewById(R.id.layout_root));
-			
-			final Button jump = (Button) layout.findViewById(R.id.jump);
-			final SeekBar sb = (SeekBar) layout.findViewById(R.id.seekBar);
-			sb.setMax(3*60);
-			sb.setProgress(db.getJumpTime(anime.URL));
-			jump.setText(getString(R.string.jump) + " +" + displayTime(sb.getProgress()) + " min");
-
-			sb.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-				@Override
-				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-					jump.setText(getString(R.string.jump)+" +" + displayTime(progress) + " min");
-				}
-				@Override
-				public void onStopTrackingTouch(SeekBar seekBar) {}
-				@Override
-				public void onStartTrackingTouch(SeekBar seekBar) {}
-			});
-			
-			jump.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					db.setJumpTime(anime.URL, sb.getProgress());
-					webView.loadUrl("javascript:document.getElementById('video').play();");
-					webView.loadUrl("javascript:document.getElementById('video').currentTime+="+sb.getProgress()+".0;");
-					WebVideoActivity.alertDialog.dismiss();
-				}
-			});
-					
-			builder = new AlertDialog.Builder(this);
-			builder.setView(layout);
-			alertDialog = builder.create();
-			alertDialog.show();
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-	
-	private String displayTime(int sec) {
-		int min = sec / 60;
-		sec = sec - (min*60);
-		return min + ":" + (sec<10?("0"+sec):sec);
 	}
 	
 	private void callHiddenWebViewMethod(String name) {

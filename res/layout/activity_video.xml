@@ -1,0 +1,26 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent" 
+android:background="@android:color/black"
+android:id="@+id/video_player_layout">
+
+<VideoView
+    android:id="@+id/video"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center"
+    android:longClickable="true" >
+
+</VideoView>
+
+<ProgressBar 
+    android:id="@+id/progress" 
+    android:indeterminate="true" 
+    android:indeterminateBehavior="repeat" 
+    android:layout_width="100dp" 
+    android:layout_height="100dp" 
+    android:layout_gravity="center">
+</ProgressBar>
+
+
+</FrameLayout>
