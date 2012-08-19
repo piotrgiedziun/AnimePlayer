@@ -108,7 +108,7 @@ public class AnimeVideosActivity extends ListActivity {
 					int start = url.indexOf("http://anime-shinden.info/player/hd.php?link=");
 					int end = (url.substring(start, url.length()-1-start)).indexOf("mp4");
 					url = url.substring(start, end+start) + "mp4";
-					url = "<html><body  style=\"padding:0px; margin:0px\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <video width=\"100%\" height=\"100%\" controls=\"controls\"><source src=\""+url+"\" type=\"video/mp4\" autoplay=\"autoplay\"/></video></body></html>";
+					url = "<html><body  style=\"padding:0px; margin:0px;background-color:black;\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <video width=\"100%\" height=\"100%\" controls=\"controls\" autoplay=\"autoplay\"><source src=\""+url+"\" type=\"video/mp4\"/></video></body></html>";
 				    result.add(new Video( "anime-shinden.info #"+count , url, "anime-shinden.info" ));
 				}
 				

@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings.ZoomDensity;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -52,9 +54,12 @@ public class WebVideoActivity extends Activity {
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.getSettings().setAllowFileAccess(true);
 		webView.getSettings().setPluginsEnabled(true);
-		webView.getSettings().setAllowFileAccess(true);
+		webView.getSettings().setSupportZoom(false);
 		webView.getSettings().setLoadWithOverviewMode(true);
-		webView.getSettings().setUseWideViewPort(true);
+		webView.getSettings().setUseWideViewPort(false);
+		webView.getSettings().setBuiltInZoomControls(false);
+		webView.getSettings().setDefaultZoom(ZoomDensity.FAR);
+		
 		webView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
 		webView.setWebChromeClient(new WebChromeClient());	
 		webView.setWebViewClient(new WebViewClient(){ 
@@ -65,8 +70,6 @@ public class WebVideoActivity extends Activity {
 		});
         if (extras != null) {
         	webView.stopLoading();
-        	Log.d("JD", "url="+extras.getString("url"));
-        	Log.d("JD", "type="+extras.getString("type"));
         	if(extras.getString("type").equals("anime-shinden.info")) {
         		webView.loadDataWithBaseURL("animeplayer://animename", extras.getString("url"), "text/html", "UTF-8", null);
         	}else{
@@ -94,36 +97,34 @@ public class WebVideoActivity extends Activity {
     protected void onPause(){
         super.onPause();
         
-//        callHiddenWebViewMethod("onPause");
-//
-//        webView.pauseTimers();
-//        if(isFinishing()){
-//        	webView.loadUrl("about:blank");
-//            setContentView(new FrameLayout(this));
-//        }
+        callHiddenWebViewMethod("onPause");
+
+        webView.pauseTimers();
+        if(isFinishing()){
+        	webView.loadUrl("about:blank");
+        }
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-
-//        callHiddenWebViewMethod("onResume");
-//
-//        webView.resumeTimers();
+        webView.resumeTimers();
+        callHiddenWebViewMethod("onResume");
+        handler.postDelayed(runnable, 3000);
     }
     
+    @Override
+	public void onConfigurationChanged(Configuration newConfig){
+	    super.onConfigurationChanged(newConfig);
+	}
+    
     private void callHiddenWebViewMethod(String name){
-   
         if( webView != null ){
             try {
                 Method method = WebView.class.getMethod(name);
                 method.invoke(webView);
-            } catch (NoSuchMethodException e) {
-                Log.d("test", "No such method: " + name + e);
-            } catch (IllegalAccessException e) {
-                Log.d("Test", "Illegal Access: " + name + e);
-            } catch (InvocationTargetException e) {
-                Log.d("Test", "Invocation Target Exception: " + name + e);
+            } catch (Exception e) {
+                Log.d("JD", "Exception: " + name + e);
             }
         }
     }

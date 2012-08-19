@@ -51,7 +51,6 @@ import android.widget.TextView;
         			
         			if(!animeList.isEmpty()) {
         				mSearch.setVisibility(View.VISIBLE);
-        				setupSearchView();
         			}else{
         				mSearch.setVisibility(View.GONE);
         				mText.setText(getString(R.string.no_results_found));
@@ -113,7 +112,7 @@ import android.widget.TextView;
             mListView.setAdapter(mAdapter = new ArrayAdapter<Anime>(c,
             	R.layout.listview_item, animeList));
             mListView.setTextFilterEnabled(true);
-
+            setupSearchView();
             return view;
         }
 

@@ -19,4 +19,5 @@
 	<string name="done">Wykonano!</string>
 	<string name="select_items">Zaznacz elementy</string>
 	<string name="history_subtitile">W celu wykonania akcji wybierz przycisk z prawej strony.</string>
+	<string name="select_type">Wybierz źródło</string>
 </resources>

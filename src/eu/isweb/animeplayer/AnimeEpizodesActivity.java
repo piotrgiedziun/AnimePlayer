@@ -7,11 +7,14 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AnimeEpizodesActivity extends ListActivity implements
 	SearchView.OnQueryTextListener {
@@ -193,6 +197,32 @@ public class AnimeEpizodesActivity extends ListActivity implements
 		case R.id.menu_favorites:
 			db.toogleFavorites(anime);
 			updateMenuFavorites();
+			return true;
+			
+		case R.id.menu_about_anime:
+			final CharSequence[] items = {"MyAnimeList", "Tanuki"};
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(getString(R.string.select_type));
+			builder.setItems(items, new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog, int item) {
+			    	Log.d("JD", Integer.toString(item));
+			    	Intent intent = new Intent(instance, AboutAnimeActivity.class);
+			    	intent.putExtra("anime", anime);
+			    	switch(item) {
+			    		case 0:
+							intent.putExtra("type", "myanimelist.net");
+							break;
+				    	case 1:
+							intent.putExtra("type", "tanuki.pl");
+							break;
+			    	}
+			    	instance.startActivity(intent);
+			    }
+			});
+			AlertDialog alert = builder.create();
+			alert.show();
+	
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
