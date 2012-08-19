@@ -16,9 +16,11 @@ public class AnimeDatabaseManager extends SQLiteOpenHelper {
 	private String[] historyColumns = { "url", "name", "epizode", "lastURL" };
 	private String favoritesTableName = "favorites";
 	private String[] favoritesColumns = { "url", "name" };
+	private String jumpTableName = "jump";
+	private String[] jumpTableColumns = { "url", "time" };
 
 	public AnimeDatabaseManager(Context context) {
-		super(context, DB_FILE_NAME, null, 7);
+		super(context, DB_FILE_NAME, null, 8);
 	}
 
 	@Override
@@ -43,6 +45,25 @@ public class AnimeDatabaseManager extends SQLiteOpenHelper {
 		Cursor c = getReadableDatabase().query(historyTableName, null, "url = \""+url+"\"",
 				null, null, null, null);
 		return c.moveToFirst();
+	}
+	
+	public int getJumpTime(String url) {
+		Cursor c = getReadableDatabase().query(jumpTableName, null, "url = \""+url+"\"",
+				null, null, null, null);
+		if (!c.moveToFirst()) 
+			return 0;
+		
+		return c.getInt(2);
+	}
+	
+	public long setJumpTime(String url, int time) {
+		if(isInHistory(url)) {
+			getWritableDatabase().delete(jumpTableName, "url = \""+url+"\"", null);
+		}
+		ContentValues v = new ContentValues();
+		v.put(jumpTableColumns[0], url);
+		v.put(jumpTableColumns[1], time);
+		return getWritableDatabase().insert(jumpTableName, null, v);
 	}
 	
 	public long insertHistory(History h) {
@@ -117,12 +138,14 @@ public class AnimeDatabaseManager extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int arg1, int arg2) {
 		db.execSQL("DROP TABLE IF EXISTS "+historyTableName);
 		db.execSQL("DROP TABLE IF EXISTS "+favoritesTableName);
+		db.execSQL("DROP TABLE IF EXISTS "+jumpTableName);
 		createTables(db);
 	}
 
 	private void createTables(SQLiteDatabase db) {
 		createTable(db, historyTableName, historyColumns);
 		createTable(db, favoritesTableName, favoritesColumns);
+		createTable(db, jumpTableName, jumpTableColumns);
 	}
 
 	public void removeHistory(String url) {

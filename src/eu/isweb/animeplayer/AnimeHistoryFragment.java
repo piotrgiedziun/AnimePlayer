@@ -61,7 +61,7 @@ import android.widget.Toast;
         	mListView.setMultiChoiceModeListener(new AnimeHistoryDeleteCallback());
             mListView.setAdapter(mAdapter = new ArrayAdapter<History>(c,
             		R.layout.listview_item_selectable, animeList));
-            
+
             refreshHistory();
             
             return view;
@@ -69,6 +69,8 @@ import android.widget.Toast;
 
         public static void refreshHistory() {
         	animeList.clear();
+        	
+        	if(db == null ) return;
         	for(History i : db.getHistory()) {
         		animeList.add(i);
         	}

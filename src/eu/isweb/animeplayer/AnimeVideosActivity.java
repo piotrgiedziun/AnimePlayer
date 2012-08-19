@@ -27,6 +27,7 @@ public class AnimeVideosActivity extends ListActivity {
 	SearchView mSearch;
 	ArrayList<Video> videosList = new ArrayList<Video>();
 	Epizode epizode;
+	Anime anime;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,8 +47,9 @@ public class AnimeVideosActivity extends ListActivity {
         
         if (extras != null) {
         	epizode = (Epizode) extras.getSerializable("epizode");
+        	anime = (Anime) extras.getSerializable("anime");
         	downloadEpizodeList(epizode.URL);
-        	this.setTitle(epizode.name);
+        	this.setTitle(anime.name + " : " +epizode.name);
         }
     }
     
@@ -108,7 +110,7 @@ public class AnimeVideosActivity extends ListActivity {
 					int start = url.indexOf("http://anime-shinden.info/player/hd.php?link=");
 					int end = (url.substring(start, url.length()-1-start)).indexOf("mp4");
 					url = url.substring(start, end+start) + "mp4";
-					url = "<html><body  style=\"padding:0px; margin:0px;background-color:black;\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <video width=\"100%\" height=\"100%\" controls=\"controls\" autoplay=\"autoplay\"><source src=\""+url+"\" type=\"video/mp4\"/></video></body></html>";
+					url = "<html><body  style=\"padding:0px; margin:0px;background-color:black;\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <video id=\"video\" width=\"100%\" height=\"100%\" controls autoplay><source src=\""+url+"\" type=\"video/mp4\"/></video></body></html>";
 				    result.add(new Video( "anime-shinden.info #"+count , url, "anime-shinden.info" ));
 				}
 				
@@ -145,14 +147,14 @@ public class AnimeVideosActivity extends ListActivity {
     
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-    	Log.d("JD", "onclick");
-    	
     	Video selectedVideo = (Video)getListView().getItemAtPosition(position);
     	
     	Intent intent = new Intent(this, WebVideoActivity.class);
-    	intent.putExtra("url", selectedVideo.URL);
-    	intent.putExtra("type", selectedVideo.type);
+    	intent.putExtra("video", selectedVideo);
+    	intent.putExtra("anime", anime);
+    	intent.putExtra("epizode", epizode);
     	startActivity(intent);
+    	
     	super.onListItemClick(l, v, position, id);
     }
 }

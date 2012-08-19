@@ -1,9 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-        <item android:id="@+id/menu_about_anime"
+   <item android:id="@+id/menu_about_anime"
         android:title="@string/menu_about"
         android:icon="@android:drawable/ic_dialog_info"
         android:orderInCategory="100"
-        android:showAsAction="always" />
+        android:showAsAction="always">
+        <menu>
+            <item android:id="@+id/menu_about_anime_myaniemlist"
+                  android:title="MyAnimeList" />
+            <item android:id="@+id/menu_about_anime_tanuki"
+                  android:title="Tanuki" />
+        </menu>
+    </item>
     <item android:id="@+id/menu_favorites"
         android:title="@string/menu_favorites"
         android:icon="@android:drawable/btn_star"

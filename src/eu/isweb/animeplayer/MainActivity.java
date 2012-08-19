@@ -106,10 +106,25 @@ public class MainActivity extends FragmentActivity {
 			AnimeListFragment f = (AnimeListFragment) MainActivity.this.getSupportFragmentManager().findFragmentByTag(getFragmentTag(1));
 			f.refresh();
 			return true;
-			
+
 		case R.id.menu_clearHistory:
-			db.clearHistory();
-			AnimeHistoryFragment.refreshHistory();
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(getString(R.string.clear_history))
+					.setTitle(getString(R.string.menu_clearHistory))
+			       .setCancelable(false)
+			       .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			        	   db.clearHistory();
+			   				AnimeHistoryFragment.refreshHistory();
+			           }
+			       })
+			       .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			                dialog.cancel();
+			           }
+			       });
+			AlertDialog alert = builder.create();
+			alert.show();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

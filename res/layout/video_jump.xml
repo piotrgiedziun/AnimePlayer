@@ -1,0 +1,40 @@
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/layout_root"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@android:color/black"
+        android:layout_marginRight="14dp"
+        android:layout_marginBottom="14dp"
+         >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="20px"
+            android:layout_marginTop="20px"
+            android:text="@string/video_jumper"
+            android:textSize="25sp" />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+              android:layout_marginLeft="20px"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/textView1"
+            android:layout_marginTop="14dp" />
+
+        <Button
+            android:id="@+id/jump"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/seekBar"
+            android:layout_marginTop="14dp"
+            android:text="@string/jump" />
+
+    </RelativeLayout>

@@ -62,6 +62,8 @@ import android.widget.TextView;
 
         public static void refreshFavorites() {
         	animeList.clear();
+        	
+        	if(db == null ) return;
         	for(Favorites i : db.getFavorites()) {
         		animeList.add(new Anime(i.name, i.url));
         	}

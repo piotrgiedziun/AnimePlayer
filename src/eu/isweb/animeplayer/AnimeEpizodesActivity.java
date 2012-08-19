@@ -158,6 +158,7 @@ public class AnimeEpizodesActivity extends ListActivity implements
 		saveCurrentListState(selectedEpizode.name, selectedEpizode.URL);
 		Intent intent = new Intent(this, AnimeVideosActivity.class);
 		intent.putExtra("epizode", selectedEpizode);
+		intent.putExtra("anime", anime);
 		
 		startActivity(intent);
 		super.onListItemClick(l, v, position, id);
@@ -193,39 +194,29 @@ public class AnimeEpizodesActivity extends ListActivity implements
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+
 		switch (item.getItemId()) {
 		case R.id.menu_favorites:
 			db.toogleFavorites(anime);
 			updateMenuFavorites();
 			return true;
 			
-		case R.id.menu_about_anime:
-			final CharSequence[] items = {"MyAnimeList", "Tanuki"};
-
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle(getString(R.string.select_type));
-			builder.setItems(items, new DialogInterface.OnClickListener() {
-			    public void onClick(DialogInterface dialog, int item) {
-			    	Log.d("JD", Integer.toString(item));
-			    	Intent intent = new Intent(instance, AboutAnimeActivity.class);
-			    	intent.putExtra("anime", anime);
-			    	switch(item) {
-			    		case 0:
-							intent.putExtra("type", "myanimelist.net");
-							break;
-				    	case 1:
-							intent.putExtra("type", "tanuki.pl");
-							break;
-			    	}
-			    	instance.startActivity(intent);
-			    }
-			});
-			AlertDialog alert = builder.create();
-			alert.show();
-	
-			return true;
+		case R.id.menu_about_anime_myaniemlist:
+			aboutAnimeLauncher(anime, "myanimelist.net");
+	    	return true;
+	    	
+		case R.id.menu_about_anime_tanuki:
+			aboutAnimeLauncher(anime, "tanuki.pl");
+	    	return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
+	
+	private void aboutAnimeLauncher(Anime a, String t) {
+		Intent intent = new Intent(instance, AboutAnimeActivity.class);
+    	intent.putExtra("anime", a);
+    	intent.putExtra("type", t);
+    	instance.startActivity(intent);
+	}
 }
