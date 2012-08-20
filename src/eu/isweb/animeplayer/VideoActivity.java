@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.app.ActionBar.OnMenuVisibilityListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -14,6 +15,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,32 +46,16 @@ public class VideoActivity extends Activity {
 	static ProgressBar mProgress;
 	VideoView videoView;
 	
-	Runnable mNavHider = new Runnable() {
-		public void run() {
-			setNavVisibility(false);
-		}
-	};
-
 	void setNavVisibility(boolean visible) {
+		Log.d("JD", "setNavVisibility("+visible+")");
 		int newVis = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
 		if (!visible) {
-			newVis = View.SYSTEM_UI_FLAG_LOW_PROFILE
+			newVis |= View.SYSTEM_UI_FLAG_LOW_PROFILE
 					| View.SYSTEM_UI_FLAG_FULLSCREEN
 					| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 		}
-
-		if (visible) {
-			Handler h = getWindow().getDecorView().getHandler();
-			if (h != null) {
-				h.removeCallbacks(mNavHider);
-				h.postDelayed(mNavHider, 3000);
-			}
-		}
-
 		getWindow().getDecorView().setSystemUiVisibility(newVis);
-		
-		if(visible) mc.show();
-			else mc.hide();
+		mc.toggle(visible);
 	}
 	
 	@Override
@@ -144,12 +130,14 @@ public class VideoActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         Bundle extras = getIntent().getExtras();
-        
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-		getActionBar().setBackgroundDrawable(null);
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//		getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+//		getActionBar().setBackgroundDrawable(null);
 		getWindow().addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
-		
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+        getActionBar().setBackgroundDrawable(null);
+        
         setContentView(R.layout.activity_video);
 
         instance = this;
@@ -161,10 +149,18 @@ public class VideoActivity extends Activity {
         mc = new AnimeMediaController(this);
         mc.setAnchorView(videoView);
         mc.setMediaPlayer(videoView);
+        mc.setOnHideListener(new OnHideListener() {
+			@Override
+			public void onHide() {
+				Log.d("JD", "hide jo jo");
+				setNavVisibility(false);
+			}
+		});
         videoView.setMediaController(mc);
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 			@Override
 			public void onPrepared(MediaPlayer mp) {
+				setNavVisibility(false);
 				mProgress.setVisibility( View.INVISIBLE );
 				mp.start();
 			}
@@ -182,7 +178,6 @@ public class VideoActivity extends Activity {
 				}
 			}
 		});
-		view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         
 		if (extras != null) {
 			video = (Video) extras.getSerializable("video");
@@ -193,6 +188,7 @@ public class VideoActivity extends Activity {
 
 			if(video.type.equals(Video.TYPE_VK)) {
 				new AnimeDownloader<Video>() {
+					@Override
 					protected void onPostExecuteAction(final ArrayList<Video> result) {
 						AlertDialog.Builder builder = new AlertDialog.Builder(instance);
 						
@@ -200,7 +196,8 @@ public class VideoActivity extends Activity {
 							builder.setMessage("Error, can not find valid video url")
 						       .setCancelable(false)
 						       .setNeutralButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-						           public void onClick(DialogInterface dialog, int id) {
+						           @Override
+								public void onClick(DialogInterface dialog, int id) {
 						                VideoActivity.this.finish();
 						           }
 						       });
@@ -216,7 +213,8 @@ public class VideoActivity extends Activity {
 						//select quality
 						builder.setTitle("Select quality");
 						builder.setItems(stringResult.toArray(new CharSequence[stringResult.size()]), new DialogInterface.OnClickListener() {
-						    public void onClick(DialogInterface dialog, int item) {
+						    @Override
+							public void onClick(DialogInterface dialog, int item) {
 						    	videoView.setVideoURI(Uri.parse(result.get(item).URL));
 						        videoView.requestFocus();
 						        videoView.start();  

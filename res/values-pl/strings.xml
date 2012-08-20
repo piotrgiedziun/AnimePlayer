@@ -1,4 +1,7 @@
 <resources>
+        <string name="app_name">Anime Player</string>
+        <string name="title_activity_main">Anime Player v1.2</string>
+    <string name="title_activity_anime">AnimeActivity</string>
     <string name="menu_clearHistory">Wyszyść historię</string>
     <string name="menu_favorites">Ulubione</string>
 	<string name="menu_about">Informacje</string>
@@ -17,7 +20,7 @@
 	<string name="select_items">Zaznacz elementy</string>
 	<string name="history_subtitile">W celu wykonania akcji wybierz przycisk z prawej strony.</string>
 	<string name="select_type">Wybierz źródło</string>
-	<string name="clear_histry">Czy jesteś pewien? Akcja wyczyści całą historię.</string>
+	<string name="clear_history">Czy jesteś pewien? Akcja wyczyści całą historię.</string>
 	<string name="video_jumper">Skocz do przodu</string>
 	<string name="jump">Skocz</string>
 </resources>

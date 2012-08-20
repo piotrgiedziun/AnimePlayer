@@ -123,7 +123,8 @@ import android.widget.TextView;
             mSearch.setQueryHint(getString(R.string.enter_anime_name));
         }
 
-        public boolean onQueryTextChange(String newText) {
+        @Override
+		public boolean onQueryTextChange(String newText) {
             if (TextUtils.isEmpty(newText)) {
                 mListView.clearTextFilter();
             } else {
@@ -132,7 +133,8 @@ import android.widget.TextView;
             return true;
         }
 
-        public boolean onQueryTextSubmit(String query) {
+        @Override
+		public boolean onQueryTextSubmit(String query) {
             return false;
         }
 

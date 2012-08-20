@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -57,7 +58,7 @@ import android.widget.Toast;
         	
         	mText = (TextView) view.findViewById(android.R.id.empty);
         	mListView = (ListView) view.findViewById(android.R.id.list);
-        	mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        	mListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
         	mListView.setMultiChoiceModeListener(new AnimeHistoryDeleteCallback());
             mListView.setAdapter(mAdapter = new ArrayAdapter<History>(c,
             		R.layout.listview_item_selectable, animeList));
@@ -85,18 +86,21 @@ import android.widget.Toast;
         private class AnimeHistoryDeleteCallback  implements ListView.MultiChoiceModeListener {
 
         	
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            @Override
+			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 getActivity().getMenuInflater().inflate(R.menu.history_delete, menu);
                 mode.setTitle(getString(R.string.select_items));
                 mode.setSubtitle(getString(R.string.history_subtitile));
                 return true;
             }
 
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            @Override
+			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
                 return true;
             }
 
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            @Override
+			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                 case R.id.menu_delete:
                 	SparseBooleanArray list = getListView().getCheckedItemPositions();
@@ -115,7 +119,8 @@ import android.widget.Toast;
                 return true;
             }
 
-            public void onItemCheckedStateChanged(ActionMode mode,
+            @Override
+			public void onItemCheckedStateChanged(ActionMode mode,
                     int position, long id, boolean checked) {
             }
             

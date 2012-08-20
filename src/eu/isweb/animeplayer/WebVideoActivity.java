@@ -39,6 +39,7 @@ public class WebVideoActivity extends Activity {
 	int mLastSystemUiVis;
 
 	Runnable mNavHider = new Runnable() {
+		@Override
 		public void run() {
 			setNavVisibility(false);
 		}

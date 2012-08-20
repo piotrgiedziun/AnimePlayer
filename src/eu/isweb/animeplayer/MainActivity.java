@@ -3,6 +3,7 @@ package eu.isweb.animeplayer;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -36,6 +37,12 @@ public class MainActivity extends FragmentActivity {
         mViewPager.setCurrentItem(1);
         
         new FlashPlayerManager(this).install();
+        
+//        Intent intent = new Intent(this,VideoActivity.class);
+//        intent.putExtra("anime", new Anime("tet", "tet"));
+//        intent.putExtra("epizode", new Epizode("tste", "test"));
+//        intent.putExtra("video", new Video("test", "", Video.TYPE_ANIME_SHIDEN));
+//		startActivity(intent);
     }
     
     @Override
@@ -81,7 +88,8 @@ public class MainActivity extends FragmentActivity {
     	builder.setMessage("All good stuff:\n- anime-shinden.info\n\nPizza lover:\n- JD\n\nBeta testing:\n- Madrim\n- Johniak")
     		   .setTitle(getString(R.string.about))
     	       .setNeutralButton(getString(R.string.about_back), new DialogInterface.OnClickListener() {
-    	           public void onClick(DialogInterface dialog, int id) {
+    	           @Override
+				public void onClick(DialogInterface dialog, int id) {
     	                dialog.cancel();
     	           }
     	       });
@@ -111,13 +119,15 @@ public class MainActivity extends FragmentActivity {
 			builder.setMessage(getString(R.string.clear_history))
 					.setTitle(getString(R.string.menu_clearHistory))
 			       .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
+			           @Override
+					public void onClick(DialogInterface dialog, int id) {
 			        	   db.clearHistory();
 			   				AnimeHistoryFragment.refreshHistory();
 			           }
 			       })
 			       .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
+			           @Override
+					public void onClick(DialogInterface dialog, int id) {
 			                dialog.cancel();
 			           }
 			       });

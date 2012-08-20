@@ -171,6 +171,7 @@ public class AnimeEpizodesActivity extends ListActivity implements
 		mSearch.setQueryHint(getString(R.string.enter_epizode_name));
 	}
 
+	@Override
 	public boolean onQueryTextChange(String newText) {
 		if (TextUtils.isEmpty(newText)) {
 			mListView.clearTextFilter();
@@ -180,6 +181,7 @@ public class AnimeEpizodesActivity extends ListActivity implements
 		return true;
 	}
 
+	@Override
 	public boolean onQueryTextSubmit(String query) {
 		return false;
 	}
