@@ -42,7 +42,7 @@ public class MainActivity extends FragmentActivity {
 //        intent.putExtra("anime", new Anime("tet", "tet"));
 //        intent.putExtra("epizode", new Epizode("tste", "test"));
 //        intent.putExtra("video", new Video("test", "", Video.TYPE_ANIME_SHIDEN));
-//		startActivity(intent);
+//		  startActivity(intent);
     }
     
     @Override

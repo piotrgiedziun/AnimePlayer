@@ -104,7 +104,7 @@ public class VideoActivity extends Activity {
 				@Override
 				public void onClick(View v) {
 					db.setJumpTime(anime.URL, sb.getProgress());
-					videoView.seekTo(sb.getProgress()*1000);
+					videoView.seekTo(videoView.getCurrentPosition() + sb.getProgress()*1000);
 					videoView.start();
 					VideoActivity.alertDialog.dismiss();
 				}
