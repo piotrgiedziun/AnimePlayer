@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -48,6 +49,9 @@ public class AnimeEpizodesActivity extends ListActivity implements
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_anime);
 
+		ActionBar actionBar = getActionBar();
+	    actionBar.setDisplayHomeAsUpEnabled(true);
+		
 		instance = this;
 		db = ((AnimeApp) getApplication()).getDB();
 
@@ -87,8 +91,8 @@ public class AnimeEpizodesActivity extends ListActivity implements
 
 	public void downloadEpizodeList(String url) {
 		mText.setText(getString(R.string.downloading_data));
-		this.setProgressBarIndeterminateVisibility(true);
-		new AnimeDownloader<Epizode>() {
+
+		new AnimeDownloader<Epizode>(this) {
 			@Override
 			protected void onPostExecuteAction(ArrayList<Epizode> result) {
 
@@ -96,8 +100,6 @@ public class AnimeEpizodesActivity extends ListActivity implements
 				epizodeList.addAll(result);
 
 				mAdapter.notifyDataSetChanged();
-				if (cm.count() == 0)
-					instance.setProgressBarIndeterminateVisibility(false);
 
 				if (!epizodeList.isEmpty()) {
 					mSearch.setVisibility(View.VISIBLE);
@@ -110,9 +112,14 @@ public class AnimeEpizodesActivity extends ListActivity implements
 			};
 
 			@Override
-			protected ArrayList<Epizode> doInBackgroundAction(Document doc) {
+			protected ArrayList<Epizode> doInBackgroundAction(Document doc) 
+					throws Exception {
 				ArrayList<Epizode> result = new ArrayList<Epizode>();
 				Elements elements = doc.select("a");
+				
+				if( elements.size() == 0) {
+					throw new Exception("try to retry");
+				}
 				
 				for (Element element : elements) {
 					if(element.text().contains("Odcinek") || element.text().contains("Ova"))
@@ -210,6 +217,10 @@ public class AnimeEpizodesActivity extends ListActivity implements
 		case R.id.menu_about_anime_tanuki:
 			aboutAnimeLauncher(anime, "tanuki.pl");
 	    	return true;
+	    	
+		case android.R.id.home:
+			finish();
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

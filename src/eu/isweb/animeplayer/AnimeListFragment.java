@@ -1,9 +1,12 @@
 package eu.isweb.animeplayer;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import eu.isweb.animeplayer.HTMLLinkExtrator.HtmlLink;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,7 +14,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -29,25 +35,42 @@ import android.widget.TextView;
     	SearchView mSearch;
     	ArrayList<Anime> animeList = new ArrayList<Anime>();
         
+    	private String LIST_ALPHA_URL = "http://www.anime-shinden.info/animelist/index.php";
+    	private String LIST_RATING_URL = "http://www.anime-shinden.info/animelist/index.php?first=rank";
+    	private String LIST_VIEWS_URL = "http://www.anime-shinden.info/animelist/index.php?first=views";
+    	
+    	private String LIST_URL = LIST_ALPHA_URL;
+    	
         @Override
         public void onAttach(Activity activity) {
         	parent = activity;
         	super.onAttach(activity);
         }
         
-        public void downloadAnimeList() {
-        	mText.setText(getString(R.string.downloading_data));
-        	parent.setProgressBarIndeterminateVisibility(true);
+        public void onSort(MenuItem item) {
+        	switch( item.getItemId() ) {
+        	case R.id.action_sort_alpha:
+        		downloadAnimeList( LIST_ALPHA_URL );
+        		break;
+        		
+        	case R.id.action_sort_size:
+        		downloadAnimeList( LIST_VIEWS_URL );
+        		break;
+        	}
         	
-        	new AnimeDownloader<Anime>(){
+        }
+        
+        public void downloadAnimeList( String url ) {
+        	LIST_URL = url;
+        	mText.setText(getString(R.string.downloading_data));
+        	
+        	new AnimeDownloader<Anime>(parent){
         		@Override
         		protected void onPostExecuteAction(ArrayList<Anime> result) {
         			animeList.clear();
         			animeList.addAll(result);
         			
         			mAdapter.notifyDataSetChanged();
-        			if(cm.count() == 0)
-        				parent.setProgressBarIndeterminateVisibility(false);
         			
         			if(!animeList.isEmpty()) {
         				mSearch.setVisibility(View.VISIBLE);
@@ -58,24 +81,21 @@ import android.widget.TextView;
         		}
 
 				@Override
-				protected ArrayList<Anime> doInBackgroundAction(Document doc) {
+				protected ArrayList<Anime> doInBackgroundAction(Vector<HtmlLink> links) 
+					throws Exception {
 					ArrayList<Anime> result = new ArrayList<Anime>();
 					
-					Elements elements = doc.select("a");
-					boolean dump = false;
-					for (Element element : elements) {
-						if(element.text().equals(".hack//Roots"))
-							dump = true;
-						if(dump) {
-							result.add(new Anime(element.text(), element.attr("href")));
-		    			if(element.text().equals("Zombie Loan"))
-		    				break;
-						}
+					if( links.size() == 0) {
+						throw new Exception("try to retry");
+					}
+					
+					for (HtmlLink link : links) {
+						result.add(new Anime(link.linkText, link.link));
 					}
 					
 					return result;
 				};
-        	}.execute("http://www.anime-shinden.info/index.php?do=cat&category=online-glowna");
+        	}.execute( url, "main" );
         }
         
         @Override
@@ -86,7 +106,7 @@ import android.widget.TextView;
         
         @Override
         public void onActivityCreated(Bundle savedInstanceState) {
-        	downloadAnimeList();
+        	refresh();
         	super.onActivityCreated(savedInstanceState);
         }
         
@@ -140,6 +160,6 @@ import android.widget.TextView;
 
 		@Override
 		public void refresh() {
-			downloadAnimeList();
+			this.downloadAnimeList( LIST_URL );
 		}
     }

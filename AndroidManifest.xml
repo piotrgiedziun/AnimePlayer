@@ -18,52 +18,54 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+				<category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".AnimeVideosActivity"
+            android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden"
-            android:label="@string/title_activity_anime" >
+            android:label="@string/title_activity_main" >
             <intent-filter>
-                      <category android:name="android.intent.category.LAUNCHER" />
+            	<category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
          <activity
             android:name=".AnimeEpizodesActivity"
-            android:label="@string/title_activity_anime" >
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_main" >
             <intent-filter>
-                      <category android:name="android.intent.category.LAUNCHER" />
+            	<category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
          <activity
             android:name=".WebVideoActivity"
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_anime" >
+            android:label="@string/title_activity_main" >
             <intent-filter>
-                          <category android:name="android.intent.category.LAUNCHER" />
+            	<category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".AboutAnimeActivity"
             android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_anime" >
+            android:label="@string/title_activity_main" >
             <intent-filter>
-                          <category android:name="android.intent.category.LAUNCHER" />
+            	<category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".VideoActivity"
             android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_anime" >
+            android:label="@string/title_activity_main" >
             <intent-filter>
-                          <category android:name="android.intent.category.LAUNCHER" />
+            	<category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>

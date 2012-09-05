@@ -4,6 +4,22 @@
         android:orderInCategory="100"
         android:icon="@drawable/refresh"
         android:showAsAction="always" />
+    <item android:id="@+id/action_sort"
+          android:icon="@android:drawable/ic_menu_sort_by_size"
+          android:orderInCategory="100"
+          android:title="@string/sort"
+          android:showAsAction="always">
+        <menu>
+            <item android:id="@+id/action_sort_alpha"
+                  android:icon="@android:drawable/ic_menu_sort_alphabetically"
+                  android:title="@string/alphabetical"
+                  android:onClick="onSort" />
+            <item android:id="@+id/action_sort_size"
+                  android:icon="@android:drawable/ic_menu_sort_by_size"
+                  android:title="@string/rating"
+                  android:onClick="onSort" />
+        </menu>
+    </item>
     <item android:id="@+id/menu_clearHistory"
         android:title="@string/menu_clearHistory"
         android:orderInCategory="100"
@@ -12,4 +28,5 @@
         android:title="@string/menu_about"
         android:orderInCategory="100"
         android:showAsAction="never" />
+    
 </menu>

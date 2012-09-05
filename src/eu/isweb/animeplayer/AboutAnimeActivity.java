@@ -1,9 +1,12 @@
 package eu.isweb.animeplayer;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -15,9 +18,13 @@ public class AboutAnimeActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		Bundle extras = getIntent().getExtras();
 		setContentView(R.layout.activity_test); 
 
+		ActionBar actionBar = getActionBar();
+	    actionBar.setDisplayHomeAsUpEnabled(true);
+	    
 		webView = (WebView)findViewById(R.id.webview);
 		webView.getSettings().setSupportZoom(true);
 		webView.getSettings().setJavaScriptEnabled(true);
@@ -44,6 +51,16 @@ public class AboutAnimeActivity extends Activity {
         }  
 		
 		super.onCreate(savedInstanceState);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch( item.getItemId() ) {
+			case android.R.id.home:
+				finish();
+				return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override

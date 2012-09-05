@@ -6,11 +6,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
@@ -37,6 +39,9 @@ public class AnimeVideosActivity extends ListActivity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_anime);
         
+        ActionBar actionBar = getActionBar();
+	    actionBar.setDisplayHomeAsUpEnabled(true);
+        
         instance = this;
         mText = (TextView) findViewById(android.R.id.empty);
     	mListView = (ListView) findViewById(android.R.id.list);
@@ -56,11 +61,11 @@ public class AnimeVideosActivity extends ListActivity {
     public void downloadEpizodeList(String url) {
     	mText.setText(getString(R.string.downloading_data));
 
-    	this.setProgressBarIndeterminateVisibility(true);
-    	new AnimeDownloader<Video>(){
+    	new AnimeDownloader<Video>(this){
 
 			@Override
-			protected ArrayList<Video> doInBackgroundAction(Document doc) {
+			protected ArrayList<Video> doInBackgroundAction(Document doc) 
+				throws Exception {
 				ArrayList<Video> result = new ArrayList<Video>();
 				
 				Elements elements = null;
@@ -77,8 +82,7 @@ public class AnimeVideosActivity extends ListActivity {
 					int start = url.indexOf("http://anime-shinden.info/player/hd.php?link=");
 					int end = (url.substring(start, url.length()-1-start)).indexOf("mp4");
 					url = url.substring(start, end+start) + "mp4";
-					//url = "<html><body  style=\"padding:0px; margin:0px;background-color:black;\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <video id=\"video\" width=\"100%\" height=\"100%\" controls autoplay><source src=\""+url+"\" type=\"video/mp4\"/></video></body></html>";
-				    result.add(new Video( "anime-shinden.info #"+count , url, Video.TYPE_ANIME_SHIDEN ));
+				    result.add(new Video( "anime-shinden.info #"+count , url, Video.TYPE_ANIME_SHIDEN, count ));
 				}
 				
 	        	//vk.com
@@ -89,7 +93,7 @@ public class AnimeVideosActivity extends ListActivity {
 						if(video.type.equals(Video.TYPE_VK))
 							count++;
 					}
-				    result.add(new Video( "vk.com #"+count , element.attr("src"), Video.TYPE_VK ));
+				    result.add(new Video( "vk.com #"+count , element.attr("src"), Video.TYPE_VK, count ));
 				}
 				
 	        	//dailymotion.com
@@ -100,7 +104,7 @@ public class AnimeVideosActivity extends ListActivity {
 						if(video.type.equals(Video.TYPE_DAILYMOTION))
 							count++;
 					}
-				    result.add(new Video( "dailymotion.com #"+count , element.attr("src"), Video.TYPE_DAILYMOTION ));
+				    result.add(new Video( "dailymotion.com #"+count , element.attr("src"), Video.TYPE_DAILYMOTION, count ));
 				}
 				
 				//sibnet.ru
@@ -111,7 +115,7 @@ public class AnimeVideosActivity extends ListActivity {
 						if(video.type.equals(Video.TYPE_SIBNET))
 							count++;
 					}
-				    result.add(new Video( "sibnet.ru #"+count , element.attr("src"), Video.TYPE_SIBNET ));
+				    result.add(new Video( "sibnet.ru #"+count , element.attr("src"), Video.TYPE_SIBNET, count ));
 				}
 				
 				//myspace.com
@@ -122,9 +126,12 @@ public class AnimeVideosActivity extends ListActivity {
 						if(video.type.equals(Video.TYPE_MYSPACE))
 							count++;
 					}
-				    result.add(new Video( "myspace.com #"+count , element.attr("src"), Video.TYPE_MYSPACE ));
+				    result.add(new Video( "myspace.com #"+count , element.attr("src"), Video.TYPE_MYSPACE, count ));
 				}
 
+				if( result.size() == 0) {
+					throw new Exception("try to retry");
+				}
 				
 				return result;
 			}
@@ -135,8 +142,6 @@ public class AnimeVideosActivity extends ListActivity {
 				videosList.addAll(result);
 				
     			mAdapter.notifyDataSetChanged();
-    			if(cm.count() == 0)
-    				instance.setProgressBarIndeterminateVisibility(false);
     			
     			if(videosList.isEmpty()) {
     				mText.setText(getString(R.string.no_results_found));
@@ -144,6 +149,16 @@ public class AnimeVideosActivity extends ListActivity {
 			};
     	}.execute(url);
     }
+    
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch( item.getItemId() ) {
+			case android.R.id.home:
+				finish();
+				return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
     
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
@@ -153,6 +168,16 @@ public class AnimeVideosActivity extends ListActivity {
     	if(selectedVideo.type.equals(Video.TYPE_ANIME_SHIDEN) 
     			|| selectedVideo.type.equals(Video.TYPE_VK) ) {
         	intent = new Intent(this, VideoActivity.class);
+        	
+        	ArrayList<Video> nextVideos = new ArrayList<Video>();
+        	//find videos in same hosting
+        	for (Video video : videosList) {
+        		if( video.type.equals(selectedVideo.type) && video.position > selectedVideo.position) {
+        			nextVideos.add(video);
+        		}
+        	}
+        	intent.putExtra("next", nextVideos);
+        	
     	}else{
         	intent = new Intent(this, WebVideoActivity.class);
     	}

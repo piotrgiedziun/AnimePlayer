@@ -15,11 +15,13 @@ public class Video
 	public String name;
 	public String URL;
 	public String type;
+	public int position;
 	
-	public Video(String n, String u, String t) {
+	public Video(String n, String u, String t, int p) {
 		this.name = n;
 		this.URL = u;
 		this.type = t;
+		this.position = p;
 	}
 	
 	@Override

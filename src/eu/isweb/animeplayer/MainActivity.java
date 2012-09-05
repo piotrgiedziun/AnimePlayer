@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -37,12 +38,11 @@ public class MainActivity extends FragmentActivity {
         mViewPager.setCurrentItem(1);
         
         new FlashPlayerManager(this).install();
-        
-//        Intent intent = new Intent(this,VideoActivity.class);
-//        intent.putExtra("anime", new Anime("tet", "tet"));
-//        intent.putExtra("epizode", new Epizode("tste", "test"));
-//        intent.putExtra("video", new Video("test", "", Video.TYPE_ANIME_SHIDEN));
-//		  startActivity(intent);
+    }
+    
+    public void onSort(MenuItem item) {
+    	AnimeListFragment f = (AnimeListFragment) MainActivity.this.getSupportFragmentManager().findFragmentByTag(getFragmentTag(1));
+		f.onSort( item );
     }
     
     @Override
@@ -50,7 +50,7 @@ public class MainActivity extends FragmentActivity {
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
-
+    
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {

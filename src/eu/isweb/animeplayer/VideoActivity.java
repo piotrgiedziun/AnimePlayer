@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,21 +40,48 @@ public class VideoActivity extends Activity {
 	protected static AlertDialog alertDialog;
 	int mLastSystemUiVis;
 	AnimeMediaController mc;
+	ArrayList<Video> nextVideos;
 	Video video;
 	Anime anime;
+	Epizode epizode;
 	AnimeDatabaseManager db;
 	Context instance;
 	static ProgressBar mProgress;
+	Button mCloseButton;
+	Button mNextButton;
 	VideoView videoView;
+	boolean blockVisibilityChange = false;
 	
+    private void setFullscreen(boolean on) {
+        Window win = getWindow();
+        WindowManager.LayoutParams winParams = win.getAttributes();
+        final int bits = WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        if (on) {
+            winParams.flags |=  bits;
+        } else {
+            winParams.flags &= ~bits;
+        }
+        win.setAttributes(winParams);
+    }
+    
+    void setAndBlockNavVisibility(boolean visible) {
+    	setNavVisibility(visible);
+    	blockVisibilityChange = true;
+    }
+    
 	void setNavVisibility(boolean visible) {
+		if( blockVisibilityChange ) {
+			return;
+		}
 		Log.d("JD", "setNavVisibility("+visible+")");
-		int newVis = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+		int newVis = View.SYSTEM_UI_FLAG_VISIBLE;
+		
 		if (!visible) {
 			newVis |= View.SYSTEM_UI_FLAG_LOW_PROFILE
 					| View.SYSTEM_UI_FLAG_FULLSCREEN
 					| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 		}
+		setFullscreen(visible);
 		getWindow().getDecorView().setSystemUiVisibility(newVis);
 		mc.toggle(visible);
 	}
@@ -61,11 +89,17 @@ public class VideoActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-			videoView.stopPlayback();
 			finish();
 		}
 		return super.onKeyDown(keyCode, event);
 	}
+	
+	@Override
+	public void finish() {
+		videoView.stopPlayback();
+		super.finish();
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.video, menu);
@@ -95,7 +129,9 @@ public class VideoActivity extends Activity {
 					jump.setText(getString(R.string.jump)+" +" + displayTime(progress) + " min");
 				}
 				@Override
-				public void onStopTrackingTouch(SeekBar seekBar) {}
+				public void onStopTrackingTouch(SeekBar seekBar) {
+					db.setJumpTime(anime.URL, sb.getProgress());
+				}
 				@Override
 				public void onStartTrackingTouch(SeekBar seekBar) {}
 			});
@@ -103,7 +139,6 @@ public class VideoActivity extends Activity {
 			jump.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					db.setJumpTime(anime.URL, sb.getProgress());
 					videoView.seekTo(videoView.getCurrentPosition() + sb.getProgress()*1000);
 					videoView.start();
 					VideoActivity.alertDialog.dismiss();
@@ -125,18 +160,47 @@ public class VideoActivity extends Activity {
 		return min + ":" + (sec<10?("0"+sec):sec);
 	}
 	
+	
+	public void goToNext() {
+		if( nextVideos.size() < 1) {
+			return;
+		}
+		Intent intent = new Intent(this, VideoActivity.class);
+		intent.putExtra("video", nextVideos.get(0));
+		intent.putExtra("anime", anime);
+		intent.putExtra("epizode", epizode);
+		nextVideos.remove(0);
+	    intent.putExtra("next", nextVideos);
+		startActivity(intent);
+		
+		finish();
+	}
+	
+	@Override
+	protected void onPause() {
+		videoView.pause();
+		super.onPause();
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		videoView.start();
+	}
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Bundle extras = getIntent().getExtras();
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//		getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-//		getActionBar().setBackgroundDrawable(null);
-		getWindow().addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        getWindow().addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         getActionBar().setBackgroundDrawable(null);
+        Window win = getWindow();
+        WindowManager.LayoutParams winParams = win.getAttributes();
+        winParams.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+        win.setAttributes(winParams);
         
         setContentView(R.layout.activity_video);
 
@@ -144,7 +208,25 @@ public class VideoActivity extends Activity {
         db = ((AnimeApp) getApplication()).getDB();
         
         mProgress = (ProgressBar)findViewById(R.id.progress);
+        mNextButton = (Button)findViewById(R.id.next_button);
+        mCloseButton = (Button)findViewById(R.id.close_button);
         videoView = (VideoView)findViewById(R.id.video);
+        
+        mCloseButton.setVisibility(View.INVISIBLE);
+        mCloseButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
+        
+        mNextButton.setVisibility(View.GONE);
+        mNextButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				goToNext();
+			}
+		});
         
         mc = new AnimeMediaController(this);
         mc.setAnchorView(videoView);
@@ -165,6 +247,19 @@ public class VideoActivity extends Activity {
 				mp.start();
 			}
 		});
+        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+			@Override
+			public void onCompletion(MediaPlayer mp) {
+				mProgress.setVisibility( View.INVISIBLE );
+				mCloseButton.setVisibility(View.VISIBLE);
+				
+				if( nextVideos.size() >= 1) {
+					mNextButton.setVisibility(View.VISIBLE);
+				}
+				
+				setAndBlockNavVisibility(true);
+			}
+		});
 
         View view = findViewById(R.id.video_player_layout);
 		view.setOnSystemUiVisibilityChangeListener(new OnSystemUiVisibilityChangeListener() {
@@ -180,11 +275,13 @@ public class VideoActivity extends Activity {
 		});
         
 		if (extras != null) {
+			nextVideos = new ArrayList<Video>();
 			video = (Video) extras.getSerializable("video");
 			anime = (Anime) extras.getSerializable("anime");
-			Epizode e = (Epizode) extras.getSerializable("epizode");
+			epizode = (Epizode) extras.getSerializable("epizode");
+			nextVideos = (ArrayList<Video>) extras.getSerializable("next");
 			
-			setTitle(anime.name + " : " + e.name);
+			setTitle(anime.name + " : " + epizode.name);
 
 			if(video.type.equals(Video.TYPE_VK)) {
 				new AnimeDownloader<Video>() {
@@ -233,7 +330,7 @@ public class VideoActivity extends Activity {
 							String split[]= element.attr("src").split("\\.");
 							if(split.length == 0) continue;
 							
-						    result.add(new Video( split[split.length-2] + "p" , element.attr("src"), Video.TYPE_VK ));
+						    result.add(new Video( split[split.length-2] + "p" , element.attr("src"), Video.TYPE_VK, 0 ));
 						}
 						
 						return result;

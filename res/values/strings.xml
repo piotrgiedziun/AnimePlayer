@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">Anime Player</string>
     <string name="menu_clearHistory">Clear history</string>
-    <string name="title_activity_main">Anime Player v1.2</string>
-    <string name="title_activity_anime">AnimeActivity</string>
+    <string name="title_activity_main">Anime Player</string>
     <string name="menu_favorites">Favorites</string>
 	<string name="menu_about">About</string>
 	<string name="menu_refresh">Refresh</string>
@@ -23,4 +22,9 @@
 	<string name="clear_history">Are you sure you want to clear history?</string>
 	<string name="video_jumper">Video jumper</string>
 	<string name="jump">Jump</string>
+	<string name="close">Close</string>
+	<string name="alphabetical">Alphabetical</string>
+	<string name="sort">Sort</string>
+	<string name="rating">Rating</string>
+	<string name="next">Next</string>
 </resources>
