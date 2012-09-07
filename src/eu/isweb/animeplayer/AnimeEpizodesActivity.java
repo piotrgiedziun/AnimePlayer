@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -115,7 +116,15 @@ public class AnimeEpizodesActivity extends ListActivity implements
 			protected ArrayList<Epizode> doInBackgroundAction(Document doc) 
 					throws Exception {
 				ArrayList<Epizode> result = new ArrayList<Epizode>();
-				Elements elements = doc.select("a");
+				Log.d("JD", anime.URL.split("/")[anime.URL.split("/").length-1].split("-")[0]);
+				int anime_id;
+				try {
+					anime_id = Integer.parseInt(anime.URL.split("/")[anime.URL.split("/").length-1].split("-")[0]);
+				}catch(Exception e) {
+					throw new FinalException("invalid id");
+				}
+				
+				Elements elements = doc.select("#news-id-"+anime_id+" a");
 				
 				if( elements.size() == 0) {
 					throw new Exception("try to retry");

@@ -79,6 +79,8 @@ public abstract class AnimeDownloader<T>
             		
     				result = doInBackgroundAction(doc);
     			}
+   			} catch(FinalException e) {
+   				MAX_RETRY = 0;
    			} catch (Exception e) {
    				Log.e("JD", e.toString());
    				try { Thread.sleep(500); } catch (InterruptedException e1) {}
