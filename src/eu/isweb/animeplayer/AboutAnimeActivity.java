@@ -4,9 +4,12 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.Window;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -20,6 +23,8 @@ public class AboutAnimeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		Bundle extras = getIntent().getExtras();
+		
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_test); 
 
 		ActionBar actionBar = getActionBar();
@@ -34,6 +39,16 @@ public class AboutAnimeActivity extends Activity {
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 				view.loadUrl(url);
 				return true;
+			}
+			@Override
+			public void onPageStarted(WebView view, String url, Bitmap favicon) {
+				setProgressBarIndeterminateVisibility(true);
+				super.onPageStarted(view, url, favicon);
+			}
+			@Override
+			public void onPageFinished(WebView view, String url) {
+				setProgressBarIndeterminateVisibility(false);
+				super.onPageFinished(view, url);
 			}
 		});
 		
