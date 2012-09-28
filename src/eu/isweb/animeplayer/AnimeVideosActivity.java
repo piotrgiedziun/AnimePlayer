@@ -98,6 +98,10 @@ public class AnimeVideosActivity extends ListActivity {
 				
 	        	//dailymotion.com
 				elements = doc.select("iframe[src^=http://www.dailymotion.com/]");
+				if(elements.isEmpty()) {
+					// old version of daily
+					elements = doc.select("embed[src^=http://www.dailymotion.com/]");
+				}
 				for (Element element : elements) {
 					int count = 1;
 					for(Video video : result) {

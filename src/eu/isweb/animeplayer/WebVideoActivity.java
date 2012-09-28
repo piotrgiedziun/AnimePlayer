@@ -162,6 +162,8 @@ public class WebVideoActivity extends Activity {
 		super.onResume();
 		webView.resumeTimers();
 		callHiddenWebViewMethod("onResume");
+		callHiddenWebViewMethod("resume");
+		callHiddenWebViewMethod("onPlay");
 	}
 
 	@Override
